@@ -9,7 +9,7 @@ Basic features:
 ```cs
 public static void Main(string[] args)
 {
-	//Set up a new scraper to scrap Austin's craigslist
+	//Set up a new scraper to scrape Austin's craigslist
     Scraper scraper = new Scraper("https://austin.craigslist.org");
 
 	//Set the URL for the results page. In this case, "apts/housing for rent".
