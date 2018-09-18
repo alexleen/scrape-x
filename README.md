@@ -1,4 +1,5 @@
 # scrape-x
+[![Build status](https://ci.appveyor.com/api/projects/status/hm4fyghc1gtuxequ/branch/master?svg=true)](https://ci.appveyor.com/project/alexleen/scrape-x/branch/master)
 Simple .NET library that provides generic web scraping abilities using XPaths. Coming soon to nuget.
 
 Basic features:
