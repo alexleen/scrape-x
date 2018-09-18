@@ -1,7 +1,8 @@
 # scrape-x
 [![Build status](https://ci.appveyor.com/api/projects/status/hm4fyghc1gtuxequ/branch/master?svg=true)](https://ci.appveyor.com/project/alexleen/scrape-x/branch/master)
+[![nuget](https://img.shields.io/nuget/v/ScrapeX.svg)](https://www.nuget.org/packages/ScrapeX/)
 
-Simple .NET library that provides generic web scraping abilities using XPaths. Coming soon to nuget.
+Simple .NET library that provides generic web scraping abilities using XPaths.
 
 Basic features:
 - Fluent/builder pattern interface
