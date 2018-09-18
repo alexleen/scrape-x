@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ScrapeX")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple .NET library that provides generic web scraping abilities using XPaths.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ScrapeX")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2018 Alex Leendertsen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -50,7 +50,7 @@ namespace ScrapeX
         /// <summary>
         /// Sets the XPath for the node of each search result.
         /// Node will be used when retrieving the link to the result (specified in <see cref="SetIndividualResultLinkXPath"/>)
-        /// and when evaulating the result predicate (specified in <see cref="SetResultVisitPredicate"/>).
+        /// and when evaluating the result predicate (specified in <see cref="SetResultVisitPredicate"/>).
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
