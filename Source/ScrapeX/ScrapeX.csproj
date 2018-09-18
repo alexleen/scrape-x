@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/alexleen/scrape-x</RepositoryUrl>
     <PackageTags>C#, .net standard, scrape, scraper, scraping, web scraper</PackageTags>
     <RepositoryType></RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
