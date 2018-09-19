@@ -34,8 +34,8 @@ namespace ScrapeX
 
         /// <summary>
         /// Sets the XPath for the node of each search result.
-        /// Node will be used when retrieving the link to the result (specified in <see cref="IScraper.SetIndividualResultLinkXPath"/>)
-        /// and when evaluating the result predicate (specified in <see cref="IScraper.SetResultVisitPredicate"/>).
+        /// Node will be used when retrieving the link to the result (specified in <see cref="SetIndividualResultLinkXPath"/>)
+        /// and when evaluating the result predicate (specified in <see cref="SetResultVisitPredicate"/>).
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
@@ -43,7 +43,7 @@ namespace ScrapeX
         IScraper SetIndividualResultNodeXPath(string xPath);
 
         /// <summary>
-        /// XPath to the link for the search result relative to the individual result node specified in <see cref="IScraper.SetIndividualResultNodeXPath"/>.
+        /// XPath to the link for the search result relative to the individual result node specified in <see cref="SetIndividualResultNodeXPath"/>.
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
@@ -63,7 +63,7 @@ namespace ScrapeX
 
         /// <summary>
         /// Sets the keys and associated XPaths for retrieving data from the target page.
-        /// Keys are used to identify the individual data points in the callback to the <see cref="IScraper.Go"/> method.
+        /// Keys are used to identify the individual data points in the callback to the <see cref="Go"/> method.
         /// </summary>
         /// <param name="xPaths"></param>
         /// <returns></returns>

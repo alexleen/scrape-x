@@ -15,7 +15,7 @@ namespace ScrapeX
     //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
     //TODO strategies - which will be how the above two TODOs will be accomplished
-    //TODO compile XPaths and store as XPathExpressions? Or just take XPathExpressions as params? https://stackoverflow.com/questions/308926/verify-an-xpath-in-net
+    //TODO compile XPaths and store as XPathExpressions? Or just take XPathExpressions as params? Overloads? https://stackoverflow.com/questions/308926/verify-an-xpath-in-net
     internal class Scraper : IScraper
     {
         private readonly string mBaseUrl;
