@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
-using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Xml.XPath;
+using HtmlAgilityPack;
 
 namespace ScrapeX
 {
@@ -200,10 +200,8 @@ namespace ScrapeX
                 htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
                 return htmlDoc.CreateNavigator();
             }
-            else
-            {
-                return mHtmlWeb.Load(url).CreateNavigator();
-            }
+
+            return mHtmlWeb.Load(url).CreateNavigator();
         }
     }
 }

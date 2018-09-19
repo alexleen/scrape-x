@@ -1,5 +1,7 @@
-using NUnit.Framework;
+// Copyright © 2018 Alex Leendertsen
+
 using System;
+using NUnit.Framework;
 
 namespace ScrapeX.Test
 {
