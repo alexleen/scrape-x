@@ -14,7 +14,6 @@ namespace ScrapeX
 {
     //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
-    //TODO param validation
     internal class Scraper : IScraper
     {
         private readonly string mBaseUrl;
@@ -43,43 +42,78 @@ namespace ScrapeX
 
         public IScraper UseHttpClient(HttpClient httpClient)
         {
-            mHttpClient = httpClient;
+            mHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             return this;
         }
 
         public IScraper SetResultsStartPage(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(url));
+            }
+
             mResultsStartPageUrl = url;
             return this;
         }
 
-        public IScraper SetNextLink(string nextLinkXPath)
+        public IScraper SetNextLink(string xPath)
         {
-            mNextLinkXPath = nextLinkXPath;
+            if (string.IsNullOrWhiteSpace(xPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
+            }
+
+            mNextLinkXPath = xPath;
             return this;
         }
 
         public IScraper SetIndividualResultNodeXPath(string xPath)
         {
+            if (string.IsNullOrWhiteSpace(xPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
+            }
+
             mIndividualNodeXPath = xPath;
             return this;
         }
 
         public IScraper SetIndividualResultLinkXPath(string xPath)
         {
+            if (string.IsNullOrWhiteSpace(xPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
+            }
+
             mIndividualLinkXPath = xPath;
             return this;
         }
 
         public IScraper SetResultVisitPredicate(Predicate<string> shouldVisitResult, string xPath)
         {
-            mShouldVisitResult = shouldVisitResult;
+            if (string.IsNullOrWhiteSpace(xPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
+            }
+
+            mShouldVisitResult = shouldVisitResult ?? throw new ArgumentNullException(nameof(shouldVisitResult));
             mPredicateXPath = xPath;
             return this;
         }
 
         public IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths)
         {
+            if (xPaths == null)
+            {
+                throw new ArgumentNullException(nameof(xPaths));
+            }
+
+            if (xPaths.Count == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(xPaths));
+            }
+
             mXPaths = xPaths;
             return this;
         }
@@ -98,6 +132,11 @@ namespace ScrapeX
         //TODO async version?
         public void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
+            if (onTargetRetrieved == null)
+            {
+                throw new ArgumentNullException(nameof(onTargetRetrieved));
+            }
+
             string currentResultsPageUrl = mResultsStartPageUrl;
 
             do

@@ -25,9 +25,9 @@ namespace ScrapeX
         /// <summary>
         /// Sets the XPath for the link to the next page of search results.
         /// </summary>
-        /// <param name="nextLinkXPath"></param>
+        /// <param name="xPath"></param>
         /// <returns></returns>
-        IScraper SetNextLink(string nextLinkXPath);
+        IScraper SetNextLink(string xPath);
 
         /// <summary>
         /// Sets the XPath for the node of each search result.
