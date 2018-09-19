@@ -3,16 +3,19 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.XPath;
 using HtmlAgilityPack;
+
+[assembly: InternalsVisibleTo("ScrapeX.Test")]
 
 namespace ScrapeX
 {
     //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
     //TODO param validation
-    public class Scraper
+    internal class Scraper : IScraper
     {
         private readonly string mBaseUrl;
         private readonly HtmlWeb mHtmlWeb;
@@ -38,106 +41,56 @@ namespace ScrapeX
             mHtmlWeb = new HtmlWeb();
         }
 
-        /// <summary>
-        /// Use this HttpClient instead of the built in method.
-        /// </summary>
-        /// <param name="httpClient"></param>
-        /// <returns></returns>
-        public Scraper UseHttpClient(HttpClient httpClient)
+        public IScraper UseHttpClient(HttpClient httpClient)
         {
             mHttpClient = httpClient;
             return this;
         }
 
-        /// <summary>
-        /// Sets the URL for the first page of search results.
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public Scraper SetResultsStartPage(string url)
+        public IScraper SetResultsStartPage(string url)
         {
             mResultsStartPageUrl = url;
             return this;
         }
 
-        /// <summary>
-        /// Sets the XPath for the link to the next page of search results.
-        /// </summary>
-        /// <param name="nextLinkXPath"></param>
-        /// <returns></returns>
-        public Scraper SetNextLink(string nextLinkXPath)
+        public IScraper SetNextLink(string nextLinkXPath)
         {
             mNextLinkXPath = nextLinkXPath;
             return this;
         }
 
-        /// <summary>
-        /// Sets the XPath for the node of each search result.
-        /// Node will be used when retrieving the link to the result (specified in <see cref="SetIndividualResultLinkXPath"/>)
-        /// and when evaluating the result predicate (specified in <see cref="SetResultVisitPredicate"/>).
-        /// </summary>
-        /// <param name="xPath"></param>
-        /// <returns></returns>
-        public Scraper SetIndividualResultNodeXPath(string xPath)
+        public IScraper SetIndividualResultNodeXPath(string xPath)
         {
             mIndividualNodeXPath = xPath;
             return this;
         }
 
-        /// <summary>
-        /// XPath to the link for the search result relative to the individual result node specified in <see cref="SetIndividualResultNodeXPath"/>.
-        /// </summary>
-        /// <param name="xPath"></param>
-        /// <returns></returns>
-        public Scraper SetIndividualResultLinkXPath(string xPath)
+        public IScraper SetIndividualResultLinkXPath(string xPath)
         {
             mIndividualLinkXPath = xPath;
             return this;
         }
 
-        /// <summary>
-        /// Sets a predicate that is evaluated before visiting a search result.
-        /// Only if the result returns true is the result visited.        
-        /// </summary>
-        /// <param name="shouldVisitResult"></param>
-        /// <param name="xPath">XPath relative to search result node</param>
-        /// <returns></returns>
-        public Scraper SetResultVisitPredicate(Predicate<string> shouldVisitResult, string xPath)
+        public IScraper SetResultVisitPredicate(Predicate<string> shouldVisitResult, string xPath)
         {
             mShouldVisitResult = shouldVisitResult;
             mPredicateXPath = xPath;
             return this;
         }
 
-        /// <summary>
-        /// Sets the keys and associated XPaths for retrieving data from the target page.
-        /// Keys are used to identify the individual data points in the callback to the <see cref="Go"/> method.
-        /// </summary>
-        /// <param name="xPaths"></param>
-        /// <returns></returns>
-        public Scraper SetTargetPageXPaths(IDictionary<string, string> xPaths)
+        public IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths)
         {
             mXPaths = xPaths;
             return this;
         }
 
-        /// <summary>
-        /// Specifies an amount of time to wait before retrieving each search result.
-        /// </summary>
-        /// <param name="timeSpan"></param>
-        /// <returns></returns>
-        public Scraper ThrottleTargetResultRetrieval(TimeSpan timeSpan)
+        public IScraper ThrottleTargetResultRetrieval(TimeSpan timeSpan)
         {
             mThrottle = timeSpan;
             return this;
         }
 
-        /// <summary>
-        /// Specifies an amount of time to wait before retrieving a new page of search results.
-        /// </summary>
-        /// <param name="timeSpan"></param>
-        /// <returns></returns>
-        public Scraper ThrottleSearchResultRetrieval(TimeSpan timeSpan)
+        public IScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan)
         {
             throw new NotImplementedException();
         }
