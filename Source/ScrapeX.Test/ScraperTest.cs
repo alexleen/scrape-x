@@ -7,6 +7,8 @@ namespace ScrapeX.Test
     public class ScraperTest
     {
         [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
         public void Ctor_ShouldThrowIfInvalidBaseUrl(string invalidUrl)
         {
             Assert.Throws<ArgumentException>(() => new Scraper(invalidUrl));

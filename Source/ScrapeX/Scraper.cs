@@ -29,6 +29,11 @@ namespace ScrapeX
 
         public Scraper(string baseUrl)
         {
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                throw new ArgumentException("message", nameof(baseUrl));
+            }
+
             mBaseUrl = baseUrl;
             mHtmlWeb = new HtmlWeb();
         }
