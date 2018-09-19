@@ -1,16 +1,23 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Xml.XPath;
-using HtmlAgilityPack;
 
 namespace ScrapeX
 {
+    //TODO validate minimal configuration and throw on Go() if null
+    //TODO Handle unspecified optional parameters (e.g. predicate)
+    //TODO param validation
     public class Scraper
     {
         private readonly string mBaseUrl;
+        private readonly HtmlWeb mHtmlWeb;
+
+        private HttpClient mHttpClient;
         private string mResultsStartPageUrl;
         private string mNextLinkXPath;
         private IDictionary<string, string> mXPaths;
@@ -23,6 +30,18 @@ namespace ScrapeX
         public Scraper(string baseUrl)
         {
             mBaseUrl = baseUrl;
+            mHtmlWeb = new HtmlWeb();
+        }
+
+        /// <summary>
+        /// Use this HttpClient instead of the built in method.
+        /// </summary>
+        /// <param name="httpClient"></param>
+        /// <returns></returns>
+        public Scraper UseHttpClient(HttpClient httpClient)
+        {
+            mHttpClient = httpClient;
+            return this;
         }
 
         /// <summary>
@@ -118,16 +137,16 @@ namespace ScrapeX
             throw new NotImplementedException();
         }
 
+        //TODO async version?
         public void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
-            HtmlWeb web = new HtmlWeb();
             string currentResultsPageUrl = mResultsStartPageUrl;
 
             do
             {
                 string currentPage = mBaseUrl + currentResultsPageUrl;
 
-                XPathNavigator searchPage = web.Load(currentPage).CreateNavigator();
+                XPathNavigator searchPage = Get(currentPage);
 
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
@@ -150,7 +169,7 @@ namespace ScrapeX
                         Thread.Sleep(mThrottle);
                     }
 
-                    XPathNavigator listing = web.Load(link).CreateNavigator();
+                    XPathNavigator listing = Get(link);
                     IDictionary<string, string> results = new Dictionary<string, string>();
 
                     foreach (KeyValuePair<string, string> kvp in mXPaths)
@@ -165,6 +184,21 @@ namespace ScrapeX
                 currentResultsPageUrl = searchPage.SelectSingleNode(mNextLinkXPath)?.Value;
             }
             while (!string.IsNullOrEmpty(currentResultsPageUrl));
+        }
+
+        private XPathNavigator Get(string url)
+        {
+            if (mHttpClient != null)
+            {
+                HttpResponseMessage response = mHttpClient.GetAsync(url).Result;
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
+                return htmlDoc.CreateNavigator();
+            }
+            else
+            {
+                return mHtmlWeb.Load(url).CreateNavigator();
+            }
         }
     }
 }
