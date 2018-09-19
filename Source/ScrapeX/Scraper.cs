@@ -14,6 +14,8 @@ namespace ScrapeX
 {
     //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
+    //TODO strategies - which will be how the above two TODOs will be accomplished
+    //TODO compile XPaths and store as XPathExpressions? Or just take XPathExpressions as params? https://stackoverflow.com/questions/308926/verify-an-xpath-in-net
     internal class Scraper : IScraper
     {
         private readonly string mBaseUrl;
@@ -137,6 +139,8 @@ namespace ScrapeX
                 throw new ArgumentNullException(nameof(onTargetRetrieved));
             }
 
+            ValidateMinimalOptions();
+
             string currentResultsPageUrl = mResultsStartPageUrl;
 
             do
@@ -183,17 +187,25 @@ namespace ScrapeX
             while (!string.IsNullOrEmpty(currentResultsPageUrl));
         }
 
+        private void ValidateMinimalOptions()
+        {
+            if (mXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetTargetPageXPaths)}.");
+            }
+        }
+
         private XPathNavigator Get(string url)
         {
-            if (mHttpClient != null)
+            if (mHttpClient == null)
             {
-                HttpResponseMessage response = mHttpClient.GetAsync(url).Result;
-                HtmlDocument htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
-                return htmlDoc.CreateNavigator();
+                return mHtmlWeb.Load(url).CreateNavigator();
             }
 
-            return mHtmlWeb.Load(url).CreateNavigator();
+            HttpResponseMessage response = mHttpClient.GetAsync(url).Result;
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
+            return htmlDoc.CreateNavigator();
         }
     }
 }

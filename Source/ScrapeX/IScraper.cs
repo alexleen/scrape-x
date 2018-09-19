@@ -13,6 +13,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="httpClient"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="httpClient"/> is null.</exception>
         IScraper UseHttpClient(HttpClient httpClient);
 
         /// <summary>
@@ -20,6 +21,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"><paramref name="url"/> is null, empty, or consists only of whitespace characters.</exception>
         IScraper SetResultsStartPage(string url);
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
         IScraper SetNextLink(string xPath);
 
         /// <summary>
@@ -36,6 +39,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
         IScraper SetIndividualResultNodeXPath(string xPath);
 
         /// <summary>
@@ -43,6 +47,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
         IScraper SetIndividualResultLinkXPath(string xPath);
 
         /// <summary>
@@ -52,6 +57,8 @@ namespace ScrapeX
         /// <param name="shouldVisitResult"></param>
         /// <param name="xPath">XPath relative to search result node</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="shouldVisitResult"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
         IScraper SetResultVisitPredicate(Predicate<string> shouldVisitResult, string xPath);
 
         /// <summary>
@@ -60,6 +67,8 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPaths"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
         IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths);
 
         /// <summary>
@@ -80,6 +89,7 @@ namespace ScrapeX
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
         /// </summary>
         /// <param name="onTargetRetrieved"></param>
+        /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
     }
 }
