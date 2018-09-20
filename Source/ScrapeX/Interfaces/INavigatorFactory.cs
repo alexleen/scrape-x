@@ -18,20 +18,4 @@ namespace ScrapeX.Interfaces
         /// <returns></returns>
         XPathNavigator Create(string url, HttpClient httpClient, HtmlWeb htmlWeb);
     }
-
-    internal class NavigatorFactory : INavigatorFactory
-    {
-        public XPathNavigator Create(string url, HttpClient httpClient, HtmlWeb htmlWeb)
-        {
-            if (httpClient == null)
-            {
-                return htmlWeb.Load(url).CreateNavigator();
-            }
-
-            HttpResponseMessage response = httpClient.GetAsync(url).Result;
-            HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
-            return htmlDoc.CreateNavigator();
-        }
-    }
 }
