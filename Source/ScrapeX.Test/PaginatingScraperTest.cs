@@ -193,6 +193,28 @@ namespace ScrapeX.Test
         /// Since the target page has no result nodes and no next link, the while loop will exit.
         /// </summary>
         [Test]
+        public void Go_ShouldSkipNullTargetLink()
+        {
+            mSut.SetResultsStartPage(ResultsStartPage);
+            mSut.SetIndividualResultNodeXPath("//*[@id=\"sortable-results\"]/ul/li");
+            mSut.SetIndividualResultLinkXPath("br/@href"); //Doesn't exist - therfore it should return null causing the loop to continue
+            mSut.SetNextLinkXPath("//*[@id=\"searchform\"]/div[3]/div[3]/span[2]/a[3]/@href");
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
+
+            int called = 0;
+            mSut.Go((link, dict) =>
+            {
+                called++;
+            });
+
+            Assert.AreEqual(0, called);
+        }
+
+        /// <summary>
+        /// This test will exit after the first result page since the target page will be returned for "page 2".
+        /// Since the target page has no result nodes and no next link, the while loop will exit.
+        /// </summary>
+        [Test]
         public void Go_ShouldScrapeTarget_WithPredicate()
         {
             mSut.SetResultsStartPage(ResultsStartPage);
