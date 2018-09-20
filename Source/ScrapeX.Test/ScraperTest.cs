@@ -90,5 +90,23 @@ namespace ScrapeX.Test
             Assert.AreEqual(1, values.Count);
             Assert.AreEqual("3BR", values["br"]);
         }
+
+        [Test]
+        public void Go_ShouldScrapeTarget_WhenTargetXPathReturnsNull()
+        {
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]/li" } });
+
+            string receivedLink = null;
+            IDictionary<string, string> values = null;
+            mSut.Go((link, dict) =>
+            {
+                receivedLink = link;
+                values = dict;
+            });
+
+            Assert.AreEqual(BaseUrl, receivedLink);
+            Assert.AreEqual(1, values.Count);
+            Assert.IsNull(values["br"]);
+        }
     }
 }
