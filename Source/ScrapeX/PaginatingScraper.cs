@@ -11,7 +11,6 @@ using System.Xml.XPath;
 
 namespace ScrapeX
 {
-    //TODO Handle unspecified optional parameters (predicate & throttles)
     internal class PaginatingScraper : Scraper, IPaginatingScraper
     {
         private string mResultsStartPageUrl;
