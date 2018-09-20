@@ -22,7 +22,7 @@ namespace ScrapeX
         /// <returns></returns>
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
-        IPaginatingScraper SetNextLink(string xPath);
+        IPaginatingScraper SetNextLinkXPath(string xPath);
 
         /// <summary>
         /// Sets the XPath for the node of each search result.

@@ -10,7 +10,6 @@ using System.Xml.XPath;
 
 namespace ScrapeX
 {
-    //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
     internal class PaginatingScraper : Scraper, IPaginatingScraper
     {
@@ -38,7 +37,7 @@ namespace ScrapeX
             return this;
         }
 
-        public IPaginatingScraper SetNextLink(string xPath)
+        public IPaginatingScraper SetNextLinkXPath(string xPath)
         {
             if (string.IsNullOrWhiteSpace(xPath))
             {
@@ -145,7 +144,22 @@ namespace ScrapeX
         {
             if (mResultsStartPageUrl == null)
             {
-                throw new InvalidCastException($"Must first call {nameof(SetResultsStartPage)}.");
+                throw new InvalidOperationException($"Must first call {nameof(SetResultsStartPage)}.");
+            }
+
+            if (mIndividualNodeXPath == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultNodeXPath)}.");
+            }
+
+            if (mIndividualLinkXPath == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
+            }
+
+            if (mNextLinkXPath == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetNextLinkXPath)}.");
             }
 
             base.ValidateMinimalOptions();
