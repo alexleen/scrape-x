@@ -8,12 +8,23 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="NSubstitute" Version="3.1.0" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ScrapeX\ScrapeX.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HTML\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="HTML\cl-apa-listing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

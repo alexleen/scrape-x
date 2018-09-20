@@ -1,6 +1,8 @@
 // Copyright © 2018 Alex Leendertsen
 
+using NSubstitute;
 using NUnit.Framework;
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
@@ -15,7 +17,7 @@ namespace ScrapeX.Test
         [SetUp]
         public void SetUp()
         {
-            mSut = new PaginatingScraper("url", null);
+            mSut = new PaginatingScraper("url", Substitute.For<INavigatorFactory>());
         }
 
         /// <summary>

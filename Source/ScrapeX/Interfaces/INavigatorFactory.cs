@@ -1,6 +1,9 @@
 ﻿using HtmlAgilityPack;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Xml.XPath;
+
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace ScrapeX.Interfaces
 {
