@@ -1,5 +1,6 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -21,8 +22,8 @@ namespace ScrapeX
         private Predicate<string> mShouldVisitResult;
         private XPathExpression mPredicateXPath;
 
-        internal PaginatingScraper(string baseUrl)
-            : base(baseUrl)
+        internal PaginatingScraper(string baseUrl, INavigatorFactory navigatorFactory)
+            : base(baseUrl, navigatorFactory)
         {
         }
 

@@ -12,7 +12,7 @@ namespace ScrapeX.Test
         [SetUp]
         public void SetUp()
         {
-            mSut = new Scraper("baseUrl");
+            mSut = new Scraper("baseUrl", null);
         }
 
         [Test]

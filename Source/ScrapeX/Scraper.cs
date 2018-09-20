@@ -1,22 +1,24 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using HtmlAgilityPack;
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml.XPath;
-using HtmlAgilityPack;
 
 namespace ScrapeX
 {
     internal class Scraper : IScraper
     {
         protected readonly string BaseUrl;
+        private readonly INavigatorFactory mNavigatorFactory;
         private readonly HtmlWeb mHtmlWeb;
 
         private HttpClient mHttpClient;
         private IDictionary<string, string> mXPaths;
 
-        internal Scraper(string baseUrl)
+        internal Scraper(string baseUrl, INavigatorFactory navigatorFactory)
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
@@ -24,6 +26,7 @@ namespace ScrapeX
             }
 
             BaseUrl = baseUrl;
+            mNavigatorFactory = navigatorFactory;
             mHtmlWeb = new HtmlWeb();
         }
 
@@ -91,15 +94,7 @@ namespace ScrapeX
 
         protected XPathNavigator Get(string url)
         {
-            if (mHttpClient == null)
-            {
-                return mHtmlWeb.Load(url).CreateNavigator();
-            }
-
-            HttpResponseMessage response = mHttpClient.GetAsync(url).Result;
-            HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(response.Content.ReadAsStringAsync().Result);
-            return htmlDoc.CreateNavigator();
+            return mNavigatorFactory.Create(url, mHttpClient, mHtmlWeb);
         }
     }
 }

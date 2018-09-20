@@ -15,7 +15,7 @@ namespace ScrapeX.Test
         [SetUp]
         public void SetUp()
         {
-            mSut = new PaginatingScraper("url");
+            mSut = new PaginatingScraper("url", null);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace ScrapeX.Test
         [TestCaseSource(nameof(sInvalidStrings))]
         public void Ctor_ShouldThrow_WhenInvalidBaseUrl(string invalidUrl)
         {
-            Assert.Throws<ArgumentException>(() => new PaginatingScraper(invalidUrl));
+            Assert.Throws<ArgumentException>(() => new PaginatingScraper(invalidUrl, null));
         }
 
         [TestCaseSource(nameof(sInvalidStrings))]
