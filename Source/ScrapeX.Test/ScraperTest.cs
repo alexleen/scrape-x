@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.XPath;
 using NUnit.Framework;
 
 namespace ScrapeX.Test
@@ -17,7 +18,15 @@ namespace ScrapeX.Test
             mSut = new Scraper("url");
         }
 
+        /// <summary>
+        /// Strings that will fail the string.IsNullOrWhiteSpace(...) check.
+        /// </summary>
         private static readonly IEnumerable<TestCaseData> sInvalidStrings = new[] { new TestCaseData(null), new TestCaseData(string.Empty), new TestCaseData(" ") };
+
+        /// <summary>
+        /// Strings that will fail XPathExpression.Compile(...)
+        /// </summary>
+        private static readonly IEnumerable<TestCaseData> sInvalidXPaths = new[] { new TestCaseData("-") };
 
         [TestCaseSource(nameof(sInvalidStrings))]
         public void Ctor_ShouldThrow_WhenInvalidBaseUrl(string invalidUrl)
@@ -38,21 +47,39 @@ namespace ScrapeX.Test
         }
 
         [TestCaseSource(nameof(sInvalidStrings))]
-        public void SetNextLink_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        public void SetNextLink_ShouldThrow_WhenInvalidString(string invalidXPath)
         {
             Assert.Throws<ArgumentException>(() => mSut.SetNextLink(invalidXPath));
         }
 
+        [TestCaseSource(nameof(sInvalidXPaths))]
+        public void SetNextLink_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        {
+            Assert.Throws<XPathException>(() => mSut.SetNextLink(invalidXPath));
+        }
+
         [TestCaseSource(nameof(sInvalidStrings))]
-        public void SetIndividualResultNodeXPath_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        public void SetIndividualResultNodeXPath_ShouldThrow_WhenInvalidString(string invalidXPath)
         {
             Assert.Throws<ArgumentException>(() => mSut.SetIndividualResultNodeXPath(invalidXPath));
         }
 
+        [TestCaseSource(nameof(sInvalidXPaths))]
+        public void SetIndividualResultNodeXPath_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        {
+            Assert.Throws<XPathException>(() => mSut.SetIndividualResultNodeXPath(invalidXPath));
+        }
+
         [TestCaseSource(nameof(sInvalidStrings))]
-        public void SetIndividualResultLinkXPath_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        public void SetIndividualResultLinkXPath_ShouldThrow_WhenInvalidString(string invalidXPath)
         {
             Assert.Throws<ArgumentException>(() => mSut.SetIndividualResultLinkXPath(invalidXPath));
+        }
+
+        [TestCaseSource(nameof(sInvalidXPaths))]
+        public void SetIndividualResultLinkXPath_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        {
+            Assert.Throws<XPathException>(() => mSut.SetIndividualResultLinkXPath(invalidXPath));
         }
 
         [Test]
@@ -62,9 +89,15 @@ namespace ScrapeX.Test
         }
 
         [TestCaseSource(nameof(sInvalidStrings))]
-        public void SetResultVisitPredicate_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        public void SetResultVisitPredicate_ShouldThrow_WhenInvalidString(string invalidXPath)
         {
             Assert.Throws<ArgumentException>(() => mSut.SetResultVisitPredicate(str => true, invalidXPath));
+        }
+
+        [TestCaseSource(nameof(sInvalidXPaths))]
+        public void SetResultVisitPredicate_ShouldThrow_WhenInvalidXPath(string invalidXPath)
+        {
+            Assert.Throws<XPathException>(() => mSut.SetResultVisitPredicate(str => true, invalidXPath));
         }
 
         [Test]

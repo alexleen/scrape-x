@@ -15,7 +15,6 @@ namespace ScrapeX
     //TODO validate minimal configuration and throw on Go() if null
     //TODO Handle unspecified optional parameters (e.g. predicate)
     //TODO strategies - which will be how the above two TODOs will be accomplished
-    //TODO compile XPaths and store as XPathExpressions? Or just take XPathExpressions as params? https://stackoverflow.com/questions/308926/verify-an-xpath-in-net
     internal class Scraper : IScraper
     {
         private readonly string mBaseUrl;
@@ -23,15 +22,15 @@ namespace ScrapeX
 
         private HttpClient mHttpClient;
         private string mResultsStartPageUrl;
-        private string mNextLinkXPath;
+        private XPathExpression mNextLinkXPath;
         private IDictionary<string, string> mXPaths;
-        private string mIndividualNodeXPath;
-        private string mIndividualLinkXPath;
+        private XPathExpression mIndividualNodeXPath;
+        private XPathExpression mIndividualLinkXPath;
         private TimeSpan mThrottle;
         private Predicate<string> mShouldVisitResult;
-        private string mPredicateXPath;
+        private XPathExpression mPredicateXPath;
 
-        public Scraper(string baseUrl)
+        internal Scraper(string baseUrl)
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
@@ -66,7 +65,7 @@ namespace ScrapeX
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
             }
 
-            mNextLinkXPath = xPath;
+            mNextLinkXPath = XPathExpression.Compile(xPath);
             return this;
         }
 
@@ -77,7 +76,7 @@ namespace ScrapeX
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
             }
 
-            mIndividualNodeXPath = xPath;
+            mIndividualNodeXPath = XPathExpression.Compile(xPath);
             return this;
         }
 
@@ -88,7 +87,7 @@ namespace ScrapeX
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(xPath));
             }
 
-            mIndividualLinkXPath = xPath;
+            mIndividualLinkXPath = XPathExpression.Compile(xPath);
             return this;
         }
 
@@ -100,7 +99,7 @@ namespace ScrapeX
             }
 
             mShouldVisitResult = shouldVisitResult ?? throw new ArgumentNullException(nameof(shouldVisitResult));
-            mPredicateXPath = xPath;
+            mPredicateXPath = XPathExpression.Compile(xPath);
             return this;
         }
 

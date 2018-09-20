@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Xml.XPath;
 
 namespace ScrapeX
 {
@@ -29,7 +30,8 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
+        /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         IScraper SetNextLink(string xPath);
 
         /// <summary>
@@ -39,7 +41,8 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
+        /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         IScraper SetIndividualResultNodeXPath(string xPath);
 
         /// <summary>
@@ -47,7 +50,8 @@ namespace ScrapeX
         /// </summary>
         /// <param name="xPath"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
+        /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         IScraper SetIndividualResultLinkXPath(string xPath);
 
         /// <summary>
@@ -58,7 +62,8 @@ namespace ScrapeX
         /// <param name="xPath">XPath relative to search result node</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="shouldVisitResult"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, or consists only of whitespace characters.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
+        /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         IScraper SetResultVisitPredicate(Predicate<string> shouldVisitResult, string xPath);
 
         /// <summary>
