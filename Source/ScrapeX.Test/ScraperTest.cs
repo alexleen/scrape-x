@@ -14,6 +14,8 @@ namespace ScrapeX.Test
     public class ScraperTest
     {
         private const string BaseUrl = "baseUrl";
+        private XPathNavigator mNavigator;
+        private INavigatorFactory mNavigatorFactory;
         private IScraper mSut;
 
         [SetUp]
@@ -21,18 +23,30 @@ namespace ScrapeX.Test
         {
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"HTML\cl-apa-listing.html"));
-            XPathNavigator navigator = htmlDoc.CreateNavigator();
+            mNavigator = htmlDoc.CreateNavigator();
 
-            INavigatorFactory navigatorFactory = Substitute.For<INavigatorFactory>();
-            navigatorFactory.Create(BaseUrl, Arg.Any<HttpClient>(), Arg.Any<HtmlWeb>()).Returns(navigator);
+            mNavigatorFactory = Substitute.For<INavigatorFactory>();
+            mNavigatorFactory.Create(BaseUrl, Arg.Any<HttpClient>(), Arg.Any<HtmlWeb>()).Returns(mNavigator);
 
-            mSut = new Scraper(BaseUrl, navigatorFactory);
+            mSut = new Scraper(BaseUrl, mNavigatorFactory);
         }
 
         [Test]
         public void UseHttpClient_ShouldThrow_WhenNull()
         {
             Assert.Throws<ArgumentNullException>(() => mSut.UseHttpClient(null));
+        }
+
+        [Test]
+        public void UseHttpClient_ShouldUseHttpClient()
+        {
+            HttpClient httpClient = new HttpClient();
+            mSut.UseHttpClient(httpClient);
+
+            //Set this up so it only responds to a call with this HttpClient
+            mNavigatorFactory.Create(BaseUrl, httpClient, Arg.Any<HtmlWeb>()).Returns(mNavigator);
+
+            Go_ShouldScrapeTarget();
         }
 
         [Test]

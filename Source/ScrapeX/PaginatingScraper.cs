@@ -18,7 +18,8 @@ namespace ScrapeX
         private XPathExpression mNextLinkXPath;
         private XPathExpression mIndividualNodeXPath;
         private XPathExpression mIndividualLinkXPath;
-        private TimeSpan mThrottle;
+        private TimeSpan mResultRetrievalThrottle;
+        private TimeSpan mPageRetrievalThrottle;
         private Predicate<string> mShouldVisitResult;
         private XPathExpression mPredicateXPath;
 
@@ -85,13 +86,14 @@ namespace ScrapeX
 
         public IPaginatingScraper ThrottleTargetResultRetrieval(TimeSpan timeSpan)
         {
-            mThrottle = timeSpan;
+            mResultRetrievalThrottle = timeSpan;
             return this;
         }
 
         public IPaginatingScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
+            mPageRetrievalThrottle = timeSpan;
+            return this;
         }
 
         public override void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
@@ -109,13 +111,16 @@ namespace ScrapeX
             {
                 string currentPage = BaseUrl + currentResultsPageUrl;
 
+                //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
+                Thread.Sleep(mPageRetrievalThrottle);
+
                 XPathNavigator searchPage = Get(currentPage);
 
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
                 foreach (XPathNavigator result in searchResultNodes)
                 {
-                    if (!mShouldVisitResult(result.SelectSingleNode(mPredicateXPath)?.Value))
+                    if (mShouldVisitResult != null && !mShouldVisitResult(result.SelectSingleNode(mPredicateXPath)?.Value))
                     {
                         continue;
                     }
@@ -127,10 +132,8 @@ namespace ScrapeX
                         continue;
                     }
 
-                    if (mThrottle != default(TimeSpan))
-                    {
-                        Thread.Sleep(mThrottle);
-                    }
+                    //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
+                    Thread.Sleep(mResultRetrievalThrottle);
 
                     ScrapeTarget(link, onTargetRetrieved);
                 }
