@@ -9,6 +9,8 @@ namespace ScrapeX
         /// </summary>
         /// <param name="baseUrl"></param>
         /// <returns></returns>
-        IScraper Create(string baseUrl);
+        IScraper CreateSinglePageScraper(string baseUrl);
+
+        IPaginatingScraper CreatePaginatingScraper(string baseUrl);
     }
 }
