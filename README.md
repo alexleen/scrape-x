@@ -6,9 +6,12 @@
 Simple .NET library that provides generic web scraping abilities using XPaths.
 
 Basic features:
-- Fluent/builder pattern interface
+- Fluent interface
 - Pagination
 - Throttling
+- [HttpClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=netframework-4.7.2) injection
+## Wiki
+For how-to's, examples, and documentation, please wee [the wiki](https://github.com/alexleen/scrape-x/wiki).
 ## Example Usage
 ```cs
 public static void Main(string[] args)
@@ -49,3 +52,7 @@ private static void OnResultRetrieved(string link, IDictionary<string, string> r
     Console.WriteLine(results["br"]);
 }
 ```
+## Thanks!
+[JetBrains Rider](https://www.jetbrains.com/rider/)
+[AppVeyor](https://ci.appveyor.com/)
+[Codecov](https://codecov.io/)

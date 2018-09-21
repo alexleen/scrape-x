@@ -1,0 +1,27 @@
+version: 0.0.2.{build}
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+before_build:
+- cmd: nuget restore Source\scrape-x.sln
+build:
+  project: Source\scrape-x.sln
+  verbosity: minimal
+test_script:
+- cmd: >-
+    nuget install OpenCover -Version 4.6.519
+
+    nuget install Codecov -Version 1.1.0
+
+    OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+
+    Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml" -t 8865369d-3d34-48e9-83d2-b16b6571ea4b
+artifacts:
+- path: .\coverage.xml
+  name: Coverage
+deploy:
+- provider: NuGet
+  name: NuGet Publish
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
