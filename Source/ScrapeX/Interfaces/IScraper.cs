@@ -6,13 +6,16 @@ using System.Net.Http;
 
 namespace ScrapeX.Interfaces
 {
+    /// <summary>
+    /// Scraper that scrapes a single web page.
+    /// </summary>
     public interface IScraper
     {
         /// <summary>
-        /// Use this HttpClient instead of the built in method.
+        /// Use this HttpClient instead of the built in <see cref="HtmlWeb"/>.
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <returns></returns>
+        /// <returns>This instance of <see cref="IScraper"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="httpClient"/> is null.</exception>
         IScraper UseHttpClient(HttpClient httpClient);
 
@@ -21,7 +24,7 @@ namespace ScrapeX.Interfaces
         /// Keys are used to identify the individual data points in the callback to the <see cref="Go"/> method.
         /// </summary>
         /// <param name="xPaths"></param>
-        /// <returns></returns>
+        /// <returns>This instance of <see cref="IScraper"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
         IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths);
@@ -29,7 +32,7 @@ namespace ScrapeX.Interfaces
         /// <summary>
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
         /// </summary>
-        /// <param name="onTargetRetrieved"></param>
+        /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by <see cref="SetTargetPageXPaths(IDictionary{string, string})"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
     }
