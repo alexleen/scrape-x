@@ -15,10 +15,12 @@ test_script:
 
     OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
-    Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml" -t 8865369d-3d34-48e9-83d2-b16b6571ea4b
+    Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml"
 artifacts:
 - path: .\coverage.xml
   name: Coverage
+- path: Source\ScrapeX\bin\Release\ScrapeX*.nupkg
+  name: Package
 deploy:
 - provider: NuGet
   name: NuGet Publish
