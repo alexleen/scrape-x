@@ -1,14 +1,14 @@
 // Copyright © 2018 Alex Leendertsen
 
-using HtmlAgilityPack;
-using NSubstitute;
-using NUnit.Framework;
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using NSubstitute;
+using NUnit.Framework;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX.Test
 {
@@ -179,11 +179,11 @@ namespace ScrapeX.Test
 
             int called = 0;
             mSut.Go((link, dict) =>
-            {
-                called++;
-                StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
-            });
+                {
+                    called++;
+                    StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                });
 
             Assert.AreEqual(120, called); //120 results per page
         }
@@ -202,10 +202,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
-            {
-                called++;
-            });
+            mSut.Go((link, dict) => { called++; });
 
             Assert.AreEqual(0, called);
         }
@@ -226,13 +223,38 @@ namespace ScrapeX.Test
 
             int called = 0;
             mSut.Go((link, dict) =>
-            {
-                called++;
-                StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
-            });
+                {
+                    called++;
+                    StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                });
 
             Assert.AreEqual(45, called); //Only 45 of the 120 are 3br
+        }
+
+        /// <summary>
+        /// This test will exit after the first result page since the target page will be returned for "page 2".
+        /// Since the target page has no result nodes and no next link, the while loop will exit.
+        /// </summary>
+        [Test]
+        public void Go_ShouldScrapeTarget_WithPredicateXPathThatReturnsNull()
+        {
+            mSut.SetResultsStartPage(ResultsStartPage);
+            mSut.SetIndividualResultNodeXPath("//*[@id=\"sortable-results\"]/ul/li");
+            mSut.SetIndividualResultLinkXPath("a/@href");
+            mSut.SetNextLinkXPath("//*[@id=\"searchform\"]/div[3]/div[3]/span[2]/a[3]/@href");
+            mSut.SetResultVisitPredicate(housing => housing == null, "p/span[2]/span[2]/li"); //Doesn't exist - which should pass null to predicate
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
+
+            int called = 0;
+            mSut.Go((link, dict) =>
+                {
+                    called++;
+                    StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                });
+
+            Assert.AreEqual(120, called); //120 results per page
         }
 
         /// <summary>
@@ -253,11 +275,11 @@ namespace ScrapeX.Test
 
             int called = 0;
             mSut.Go((link, dict) =>
-            {
-                called++;
-                StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
-            });
+                {
+                    called++;
+                    StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                });
 
             Assert.AreEqual(45, called); //Only 45 of the 120 are 3br
         }

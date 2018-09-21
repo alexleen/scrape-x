@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace ScrapeX
+namespace ScrapeX.Interfaces
 {
     public interface IScraper
     {

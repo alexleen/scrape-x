@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
-using HtmlAgilityPack;
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX
 {

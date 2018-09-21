@@ -1,7 +1,9 @@
-﻿using HtmlAgilityPack;
+﻿// Copyright © 2018 Alex Leendertsen
+
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Xml.XPath;
+using HtmlAgilityPack;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 

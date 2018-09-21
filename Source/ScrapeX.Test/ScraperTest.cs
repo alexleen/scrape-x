@@ -1,12 +1,14 @@
-﻿using HtmlAgilityPack;
-using NSubstitute;
-using NUnit.Framework;
-using ScrapeX.Interfaces;
+﻿// Copyright © 2018 Alex Leendertsen
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using NSubstitute;
+using NUnit.Framework;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX.Test
 {
@@ -81,10 +83,10 @@ namespace ScrapeX.Test
             string receivedLink = null;
             IDictionary<string, string> values = null;
             mSut.Go((link, dict) =>
-            {
-                receivedLink = link;
-                values = dict;
-            });
+                {
+                    receivedLink = link;
+                    values = dict;
+                });
 
             Assert.AreEqual(BaseUrl, receivedLink);
             Assert.AreEqual(1, values.Count);
@@ -99,10 +101,10 @@ namespace ScrapeX.Test
             string receivedLink = null;
             IDictionary<string, string> values = null;
             mSut.Go((link, dict) =>
-            {
-                receivedLink = link;
-                values = dict;
-            });
+                {
+                    receivedLink = link;
+                    values = dict;
+                });
 
             Assert.AreEqual(BaseUrl, receivedLink);
             Assert.AreEqual(1, values.Count);

@@ -1,6 +1,6 @@
 // Copyright © 2018 Alex Leendertsen
 
-namespace ScrapeX
+namespace ScrapeX.Interfaces
 {
     public interface IScraperFactory
     {

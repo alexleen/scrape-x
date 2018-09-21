@@ -3,7 +3,7 @@
 using System;
 using System.Xml.XPath;
 
-namespace ScrapeX
+namespace ScrapeX.Interfaces
 {
     public interface IPaginatingScraper : IScraper
     {
