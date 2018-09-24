@@ -110,6 +110,11 @@ namespace ScrapeX
             {
                 string currentPage = BaseUrl + currentResultsPageUrl;
 
+                if (CancellationToken != null)
+                {
+                    CancellationToken.ThrowIfCancellationRequested();
+                }
+
                 //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
                 Thread.Sleep(mPageRetrievalThrottle);
 
@@ -129,6 +134,11 @@ namespace ScrapeX
                     if (link == null)
                     {
                         continue;
+                    }
+
+                    if (CancellationToken != null)
+                    {
+                        CancellationToken.ThrowIfCancellationRequested();
                     }
 
                     //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep

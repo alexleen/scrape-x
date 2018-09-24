@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.XPath;
 using HtmlAgilityPack;
 using ScrapeX.Interfaces;
@@ -17,6 +19,7 @@ namespace ScrapeX
 
         private HttpClient mHttpClient;
         private IDictionary<string, string> mXPaths;
+        protected CancellationToken CancellationToken;
 
         internal Scraper(string baseUrl, INavigatorFactory navigatorFactory)
         {
@@ -52,7 +55,6 @@ namespace ScrapeX
             return this;
         }
 
-        //TODO async version?
         public virtual void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -62,7 +64,23 @@ namespace ScrapeX
 
             ValidateMinimalOptions();
 
+            if (CancellationToken != null)
+            {
+                CancellationToken.ThrowIfCancellationRequested();
+            }
+
             ScrapeTarget(BaseUrl, onTargetRetrieved);
+        }
+
+        public Task GoAsync(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            return Task.Run(() => Go(onTargetRetrieved));
+        }
+
+        public Task GoAsync(Action<string, IDictionary<string, string>> onTargetRetrieved, CancellationToken cancellationToken)
+        {
+            CancellationToken = cancellationToken;
+            return Task.Run(() => Go(onTargetRetrieved), cancellationToken);
         }
 
         /// <summary>
@@ -95,6 +113,6 @@ namespace ScrapeX
         protected XPathNavigator Get(string url)
         {
             return mNavigatorFactory.Create(url, mHttpClient, mHtmlWeb);
-        }
+        }        
     }
 }

@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ScrapeX.Interfaces
 {
@@ -35,5 +37,9 @@ namespace ScrapeX.Interfaces
         /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by <see cref="SetTargetPageXPaths(IDictionary{string, string})"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
+
+        Task GoAsync(Action<string, IDictionary<string, string>> onTargetRetrieved);
+
+        Task GoAsync(Action<string, IDictionary<string, string>> onTargetRetrieved, CancellationToken cancellationToken);
     }
 }
