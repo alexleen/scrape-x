@@ -66,19 +66,42 @@ namespace ScrapeX
         }
 
         /// <summary>
-        /// Scrapes the specified link and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// Retrieves the specified link, scrapes it, and invokes <paramref name="onTargetRetrieved"/> with the results.
         /// </summary>
         /// <param name="link"></param>
         /// <param name="onTargetRetrieved"></param>
         protected void ScrapeTarget(string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
-            XPathNavigator listing = Get(link);
+            ScrapeLink(link, mXPaths, onTargetRetrieved);
+        }
 
+        /// <summary>
+        /// Retrieves the specified link, scrapes it using the specified <paramref name="xPaths"/>, and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// </summary>
+        /// <param name="link"></param>
+        /// <param name="xPaths"></param>
+        /// <param name="onTargetRetrieved"></param>
+        protected void ScrapeLink(string link, IDictionary<string, string> xPaths, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            XPathNavigator listing = Get(link);
+            Scrape(link, listing, xPaths, onTargetRetrieved);
+        }
+
+        /// <summary>
+        /// Scrapes the specified <paramref name="navigator"/> using the specified <paramref name="xPaths"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// <paramref name="link"/> is only used for callback. <paramref name="link"/> is NOT retrieved.
+        /// </summary>
+        /// <param name="link"></param>
+        /// <param name="navigator"></param>
+        /// <param name="xPaths"></param>
+        /// <param name="onTargetRetrieved"></param>
+        protected static void Scrape(string link, XPathNavigator navigator, IDictionary<string, string> xPaths, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
             IDictionary<string, string> results = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<string, string> kvp in mXPaths)
+            foreach (KeyValuePair<string, string> kvp in xPaths)
             {
-                results[kvp.Key] = listing.SelectSingleNode(kvp.Value)?.Value;
+                results[kvp.Key] = navigator.SelectSingleNode(kvp.Value)?.Value;
             }
 
             onTargetRetrieved(link, results);

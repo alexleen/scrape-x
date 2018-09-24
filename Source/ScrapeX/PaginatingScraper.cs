@@ -21,6 +21,7 @@ namespace ScrapeX
         private TimeSpan mPageRetrievalThrottle;
         private Predicate<string> mShouldVisitResult;
         private XPathExpression mPredicateXPath;
+        private IDictionary<string, string> mXPaths;
 
         internal PaginatingScraper(string baseUrl, INavigatorFactory navigatorFactory)
             : base(baseUrl, navigatorFactory)
@@ -95,6 +96,12 @@ namespace ScrapeX
             return this;
         }
 
+        public IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths)
+        {
+            mXPaths = xPaths;
+            return this;
+        }
+
         public override void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -114,6 +121,11 @@ namespace ScrapeX
                 Thread.Sleep(mPageRetrievalThrottle);
 
                 XPathNavigator searchPage = Get(currentPage);
+
+                if (mXPaths != null)
+                {
+                    Scrape(currentPage, searchPage, mXPaths, onTargetRetrieved);
+                }
 
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
@@ -166,6 +178,6 @@ namespace ScrapeX
             }
 
             base.ValidateMinimalOptions();
-        }
+        }        
     }
 }

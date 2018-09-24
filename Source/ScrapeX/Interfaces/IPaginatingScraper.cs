@@ -2,6 +2,7 @@
 
 using System;
 using System.Xml.XPath;
+using System.Collections.Generic;
 
 namespace ScrapeX.Interfaces
 {
@@ -57,7 +58,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
         /// This is the link to a target page that will be scraped. 
-        /// Results will be delivered via the callback of the <see cref="IScraper.Go(Action{string, System.Collections.Generic.IDictionary{string, string}})"/> method.
+        /// Results will be delivered via the callback of the <see cref="IScraper.Go(Action{string, IDictionary{string, string}})"/> method.
         /// </remarks>
         IPaginatingScraper SetIndividualResultLinkXPath(string xPath);
 
@@ -89,5 +90,7 @@ namespace ScrapeX.Interfaces
         /// <param name="timeSpan"></param>
         /// <returns>This instance of <see cref="IPaginatingScraper"/>.</returns>
         IPaginatingScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan);
+
+        IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths);
     }
 }
