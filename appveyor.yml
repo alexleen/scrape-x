@@ -17,18 +17,18 @@ after_build:
 
     dotnet build Source\scrape-x.sln -c Release
 
-    nuget install OpenCover -Version 4.6.519
+    nuget install OpenCover -Version 4.6.831-rc -Source https://www.myget.org/F/opencover/api/v3/index.json
 
-    OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+    OpenCover.4.6.831\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 test_script:
 - cmd: >-
-    nuget install OpenCover -Version 4.6.519
+    nuget install OpenCover -Version 4.6.831-rc -Source https://www.myget.org/F/opencover/api/v3/index.json
 
     nuget install Codecov -Version 1.1.0
 
-    OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+    OpenCover.4.6.831\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
     Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml"
 artifacts:
