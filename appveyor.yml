@@ -1,15 +1,7 @@
 version: 1.0.0.{build}
-image: Visual Studio 2017
-configuration: Release
-platform: Any CPU
 nuget:
   project_feed: true
-before_build:
-- cmd: nuget restore Source\scrape-x.sln
-build:
-  project: Source\scrape-x.sln
-  verbosity: minimal
-after_build:
+build_script:
 - cmd: >-
     dotnet tool install --global dotnet-sonarscanner
 
@@ -22,15 +14,7 @@ after_build:
     OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
-test_script:
-- cmd: >-
-    nuget install OpenCover -Version 4.6.831-rc -Source https://www.myget.org/F/opencover/api/v3/index.json
-
-    nuget install Codecov -Version 1.1.0
-
-    OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
-
-    Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml"
+test: off
 artifacts:
 - path: .\coverage.xml
   name: Coverage
