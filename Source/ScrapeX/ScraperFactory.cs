@@ -10,7 +10,7 @@ namespace ScrapeX
 
         public IScraper CreateSinglePageScraper(string url)
         {
-            return new Scraper(url, mNavigatorFactory);
+            return new Scraper(url, mNavigatorFactory)
         }
 
         public IPaginatingScraper CreatePaginatingScraper(string baseUrl)
