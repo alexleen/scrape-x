@@ -51,7 +51,7 @@ namespace ScrapeX.Test
         [TestCaseSource(nameof(sInvalidStrings))]
         public void Ctor_ShouldThrow_WhenInvalidBaseUrl(string invalidUrl)
         {
-            Assert.Throws<ArgumentException>(() => new PaginatingScraper(invalidUrl, null));
+            Assert.DoesNotThrow(() => new PaginatingScraper(invalidUrl, null));
         }
 
         [TestCaseSource(nameof(sInvalidStrings))]
