@@ -55,6 +55,6 @@ private static void OnResultRetrieved(string link, IDictionary<string, string> r
 }
 ```
 ## Thanks!
-[JetBrains Rider](https://www.jetbrains.com/rider/)
-[AppVeyor](https://ci.appveyor.com/)
+[JetBrains Rider](https://www.jetbrains.com/rider/)  
+[AppVeyor](https://ci.appveyor.com/)  
 [Codecov](https://codecov.io/)
