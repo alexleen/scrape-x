@@ -5,7 +5,7 @@ build_script:
 - cmd: >-
     dotnet tool install --global dotnet-sonarscanner
 
-    dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="APPVEYOR_REPO_BRANCH"
+    dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%"
 
     dotnet build Source\scrape-x.sln -c Release
 
