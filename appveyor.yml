@@ -15,7 +15,7 @@ after_build:
 
     dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 
-    dotnet build
+    dotnet build Source\scrape-x.sln -c Release
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 test_script:
