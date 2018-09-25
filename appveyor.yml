@@ -2,11 +2,22 @@ version: 1.0.0.{build}
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
+nuget:
+  project_feed: true
 before_build:
 - cmd: nuget restore Source\scrape-x.sln
 build:
   project: Source\scrape-x.sln
   verbosity: minimal
+  after_build:
+- cmd: >-
+    dotnet tool install dotnet-sonarscanner
+
+    dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
+
+    dotnet build
+
+    dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 test_script:
 - cmd: >-
     nuget install OpenCover -Version 4.6.519
