@@ -3,7 +3,7 @@ nuget:
   project_feed: true
 build_script:
 - cmd: >-
-    echo %APPVEYOR_PULL_REQUEST_NUMBER%
+    IF NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER echo aw snap
 
     dotnet tool install --global dotnet-sonarscanner
 
