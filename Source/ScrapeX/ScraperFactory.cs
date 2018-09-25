@@ -4,6 +4,7 @@ using ScrapeX.Interfaces;
 
 namespace ScrapeX
 {
+    //TODO PR decoration test
     public class ScraperFactory : IScraperFactory
     {
         private readonly INavigatorFactory mNavigatorFactory = new NavigatorFactory();
