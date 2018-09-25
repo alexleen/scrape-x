@@ -9,9 +9,9 @@ before_build:
 build:
   project: Source\scrape-x.sln
   verbosity: minimal
-  after_build:
+after_build:
 - cmd: >-
-    dotnet tool install dotnet-sonarscanner
+    dotnet tool install --global dotnet-sonarscanner
 
     dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 
