@@ -5,12 +5,8 @@ build_script:
 - cmd: >-
     dotnet tool install --global dotnet-sonarscanner
 
-    IF NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER (
-        echo aw snap
-        dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%"
-    ) ELSE (
-        dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%" /d:sonar.pullrequest.branch="%APPVEYOR_REPO_BRANCH%" /d:sonar.pullrequest.key="%APPVEYOR_PULL_REQUEST_NUMBER%" /d:sonar.pullrequest.provider=GitHub /d:sonar.pullrequest.github.repository=alexleen/scrape-x
-    )
+    IF NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER (dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%") 
+    ELSE (dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%" /d:sonar.pullrequest.branch="%APPVEYOR_REPO_BRANCH%" /d:sonar.pullrequest.key="%APPVEYOR_PULL_REQUEST_NUMBER%" /d:sonar.pullrequest.provider=GitHub /d:sonar.pullrequest.github.repository=alexleen/scrape-x)
 
     dotnet build Source\scrape-x.sln -c Release
 
