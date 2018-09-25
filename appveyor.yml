@@ -22,8 +22,9 @@ artifacts:
 - path: Source\ScrapeX\bin\Release\ScrapeX*.nupkg
   name: Package
 deploy:
-- provider: NuGet
-  name: NuGet Publish
+  provider: NuGet
+  api_key:
+    secure: ClqMqfuX+jJtN/3mf7YMuYk1JJ4PkHYFuTzsQ9O4oc9qmR1RQa9CaOnhREli73qZ
   on:
     branch: master
     APPVEYOR_REPO_TAG: true
