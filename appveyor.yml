@@ -13,9 +13,13 @@ after_build:
 - cmd: >-
     dotnet tool install --global dotnet-sonarscanner
 
-    dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
+    dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml"
 
     dotnet build Source\scrape-x.sln -c Release
+
+    nuget install OpenCover -Version 4.6.519
+
+    OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 test_script:
