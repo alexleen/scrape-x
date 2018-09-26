@@ -1,6 +1,7 @@
 # scrape-x
 [![Build status](https://ci.appveyor.com/api/projects/status/hm4fyghc1gtuxequ/branch/master?svg=true)](https://ci.appveyor.com/project/alexleen/scrape-x/branch/master)
-[![codecov](https://codecov.io/gh/alexleen/scrape-x/branch/master/graph/badge.svg)](https://codecov.io/gh/alexleen/scrape-x)
+[![](https://sonarcloud.io/api/project_badges/measure?project=alexleen_scrape-x&metric=alert_status)](https://sonarcloud.io/dashboard?id=alexleen_scrape-x)
+[![](https://sonarcloud.io/api/project_badges/measure?project=alexleen_scrape-x&metric=coverage)](https://sonarcloud.io/dashboard?id=alexleen_scrape-x)
 [![nuget](https://img.shields.io/nuget/v/ScrapeX.svg)](https://www.nuget.org/packages/ScrapeX/)
 
 Simple .NET library that provides generic web scraping abilities using XPaths.

@@ -1,21 +1,21 @@
 version: 1.0.0.{build}
-image: Visual Studio 2017
-configuration: Release
-platform: Any CPU
-before_build:
-- cmd: nuget restore Source\scrape-x.sln
-build:
-  project: Source\scrape-x.sln
-  verbosity: minimal
-test_script:
+nuget:
+  project_feed: true
+build_script:
 - cmd: >-
-    nuget install OpenCover -Version 4.6.519
+    dotnet tool install --global dotnet-sonarscanner
 
-    nuget install Codecov -Version 1.1.0
+    IF NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER (dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.branch.name="%APPVEYOR_REPO_BRANCH%") 
+    ELSE (dotnet sonarscanner begin /k:"alexleen_scrape-x" /d:sonar.organization="alexleen-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="ece6946878045182999e7fc3429462861816aed6" /d:sonar.cs.opencover.reportsPaths=".\coverage.xml" /d:sonar.pullrequest.branch="%APPVEYOR_REPO_BRANCH%" /d:sonar.pullrequest.key="%APPVEYOR_PULL_REQUEST_NUMBER%" /d:sonar.pullrequest.provider=GitHub /d:sonar.pullrequest.github.repository=alexleen/scrape-x)
 
-    OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+    dotnet build Source\scrape-x.sln -c Release
 
-    Codecov.1.1.0\tools\codecov.exe -f ".\coverage.xml"
+    nuget install OpenCover -Version 4.6.831-rc -Source https://www.myget.org/F/opencover/api/v3/index.json
+
+    OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+
+    dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
+test: off
 artifacts:
 - path: .\coverage.xml
   name: Coverage

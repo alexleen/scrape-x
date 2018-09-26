@@ -8,9 +8,9 @@ namespace ScrapeX
     {
         private readonly INavigatorFactory mNavigatorFactory = new NavigatorFactory();
 
-        public IScraper CreateSinglePageScraper(string baseUrl)
+        public IScraper CreateSinglePageScraper(string url)
         {
-            return new Scraper(baseUrl, mNavigatorFactory);
+            return new Scraper(url, mNavigatorFactory);
         }
 
         public IPaginatingScraper CreatePaginatingScraper(string baseUrl)
