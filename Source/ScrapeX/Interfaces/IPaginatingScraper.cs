@@ -44,7 +44,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
-        /// Node returned by specified XPath must be suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>
+        /// XPath should return a single node for each search result suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>
         /// and predicate evaluation via <see cref="SetResultVisitPredicate"/>.
         /// </remarks>
         IPaginatingScraper SetIndividualResultNodeXPath(string xPath);
@@ -91,6 +91,7 @@ namespace ScrapeX.Interfaces
         /// <returns>This instance of <see cref="IPaginatingScraper"/>.</returns>
         IPaginatingScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan);
 
+        //relative to result node!!!
         IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths);
     }
 }

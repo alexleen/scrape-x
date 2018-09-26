@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.XPath;
-using ScrapeX.Interfaces;
 
 [assembly: InternalsVisibleTo("ScrapeX.Test")]
 
@@ -122,11 +122,6 @@ namespace ScrapeX
 
                 XPathNavigator searchPage = Get(currentPage);
 
-                if (mXPaths != null)
-                {
-                    Scrape(currentPage, searchPage, mXPaths, onTargetRetrieved);
-                }
-
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
                 foreach (XPathNavigator result in searchResultNodes)
@@ -136,17 +131,25 @@ namespace ScrapeX
                         continue;
                     }
 
-                    string link = result.SelectSingleNode(mIndividualLinkXPath)?.Value;
-
-                    if (link == null)
+                    if (mXPaths != null)
                     {
-                        continue;
+                        Scrape(currentPage, result, mXPaths, onTargetRetrieved);
                     }
 
-                    //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
-                    Thread.Sleep(mResultRetrievalThrottle);
+                    if (mIndividualLinkXPath != null) //TODO or use base.mXPaths to device whether or not we're scraping results?
+                    {
+                        string link = result.SelectSingleNode(mIndividualLinkXPath)?.Value;
 
-                    ScrapeTarget(link, onTargetRetrieved);
+                        if (link == null)
+                        {
+                            continue;
+                        }
+
+                        //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
+                        Thread.Sleep(mResultRetrievalThrottle);
+
+                        ScrapeTarget(link, onTargetRetrieved);
+                    }
                 }
 
                 //next link's href. Won't exist on last page.
@@ -167,17 +170,18 @@ namespace ScrapeX
                 throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultNodeXPath)}.");
             }
 
-            if (mIndividualLinkXPath == null)
-            {
-                throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
-            }
+            //TODO this and mXPaths cannot be null at the same time
+            //if (mIndividualLinkXPath == null)
+            //{
+            //    throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
+            //}
 
             if (mNextLinkXPath == null)
             {
                 throw new InvalidOperationException($"Must first call {nameof(SetNextLinkXPath)}.");
             }
 
-            base.ValidateMinimalOptions();
-        }        
+            //base.ValidateMinimalOptions();
+        }
     }
 }
