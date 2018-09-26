@@ -52,7 +52,6 @@ namespace ScrapeX
             return this;
         }
 
-        //TODO async version?
         public virtual void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
