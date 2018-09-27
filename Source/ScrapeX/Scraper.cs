@@ -118,5 +118,10 @@ namespace ScrapeX
         {
             return mNavigatorFactory.Create(url, mHttpClient, mHtmlWeb);
         }
+
+        /// <summary>
+        /// Whether or not <see cref="Scraper"/> is setup to scrape a target result page (<see cref="mXPaths"/> is non-null).
+        /// </summary>
+        protected bool IsSetupToScrapeTarget => mXPaths != null;
     }
 }

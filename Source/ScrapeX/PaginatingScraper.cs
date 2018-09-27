@@ -136,7 +136,7 @@ namespace ScrapeX
                         Scrape(currentPage, result, mXPaths, onTargetRetrieved);
                     }
 
-                    if (mIndividualLinkXPath != null) //TODO or use base.mXPaths to device whether or not we're scraping results?
+                    if (IsSetupToScrapeTarget)
                     {
                         string link = result.SelectSingleNode(mIndividualLinkXPath)?.Value;
 
@@ -170,18 +170,32 @@ namespace ScrapeX
                 throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultNodeXPath)}.");
             }
 
-            //TODO this and mXPaths cannot be null at the same time
-            //if (mIndividualLinkXPath == null)
-            //{
-            //    throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
-            //}
-
             if (mNextLinkXPath == null)
             {
                 throw new InvalidOperationException($"Must first call {nameof(SetNextLinkXPath)}.");
             }
 
-            //base.ValidateMinimalOptions();
+            if (IsSetupToScrapeTarget)
+            {
+                if (mIndividualLinkXPath == null)
+                {
+                    throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
+                }
+
+                base.ValidateMinimalOptions();
+            }
+            else
+            {
+                if (mXPaths == null)
+                {
+                    throw new InvalidOperationException($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
+                }
+
+                if (mIndividualLinkXPath != null)
+                {
+                    throw new InvalidOperationException($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
+                }
+            }
         }
     }
 }

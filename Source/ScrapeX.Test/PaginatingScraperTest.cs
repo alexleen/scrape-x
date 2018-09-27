@@ -135,10 +135,12 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNull()
+        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNull_AndScrapingTarget()
         {
             mSut.SetResultsStartPage("/");
             mSut.SetIndividualResultNodeXPath("/");
+            mSut.SetNextLinkXPath("/");
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "key", "/" } });
 
             Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)}.");
         }
@@ -154,14 +156,26 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenTargetPageXPathsAreNull()
+        public void Go_ShouldThrow_WhenResultPageXPathsAreNull_AndNotScrapingTarget()
         {
             mSut.SetResultsStartPage("/");
             mSut.SetIndividualResultNodeXPath("/");
             mSut.SetIndividualResultLinkXPath("/");
             mSut.SetNextLinkXPath("/");
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTargetPageXPaths)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
+        }
+
+        [Test]
+        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNotNull_AndNotScrapingTarget()
+        {
+            mSut.SetResultsStartPage("/");
+            mSut.SetIndividualResultNodeXPath("/");
+            mSut.SetIndividualResultLinkXPath("/");
+            mSut.SetNextLinkXPath("/");
+            mSut.SetResultPageXPaths(new Dictionary<string, string> { { "key", "/" } });
+
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
         }
 
         /// <summary>
