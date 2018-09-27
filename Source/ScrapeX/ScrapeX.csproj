@@ -12,6 +12,7 @@
     <PackageTags>C#, .net standard, scrape, scraper, scraping, web scraper</PackageTags>
     <RepositoryType></RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>https://github.com/alexleen/scrape-x/releases</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

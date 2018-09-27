@@ -71,19 +71,8 @@ namespace ScrapeX
         /// <param name="onTargetRetrieved"></param>
         protected void ScrapeTarget(string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
-            ScrapeLink(link, mXPaths, onTargetRetrieved);
-        }
-
-        /// <summary>
-        /// Retrieves the specified link, scrapes it using the specified <paramref name="xPaths"/>, and invokes <paramref name="onTargetRetrieved"/> with the results.
-        /// </summary>
-        /// <param name="link"></param>
-        /// <param name="xPaths"></param>
-        /// <param name="onTargetRetrieved"></param>
-        protected void ScrapeLink(string link, IDictionary<string, string> xPaths, Action<string, IDictionary<string, string>> onTargetRetrieved)
-        {
             XPathNavigator listing = Get(link);
-            Scrape(link, listing, xPaths, onTargetRetrieved);
+            Scrape(link, listing, mXPaths, onTargetRetrieved);
         }
 
         /// <summary>
