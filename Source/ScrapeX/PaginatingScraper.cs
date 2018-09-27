@@ -98,6 +98,16 @@ namespace ScrapeX
 
         public IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths)
         {
+            if (xPaths == null)
+            {
+                throw new ArgumentNullException(nameof(xPaths));
+            }
+
+            if (xPaths.Count == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(xPaths));
+            }
+
             mXPaths = xPaths;
             return this;
         }

@@ -117,6 +117,18 @@ namespace ScrapeX.Test
         }
 
         [Test]
+        public void SetSetResultPageXPaths_ShouldThrow_WhenXPathsIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.SetResultPageXPaths(null));
+        }
+
+        [Test]
+        public void SetSetResultPageXPaths_ShouldThrow_WhenXPathsIsEmpty()
+        {
+            Assert.Throws<ArgumentException>(() => mSut.SetResultPageXPaths(new Dictionary<string, string>()));
+        }
+
+        [Test]
         public void Go_ShouldThrow_WhenCallbackIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => mSut.Go(null));

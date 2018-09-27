@@ -44,8 +44,8 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
-        /// XPath should return a single node for each search result suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>
-        /// and predicate evaluation via <see cref="SetResultVisitPredicate"/>.
+        /// XPath should return a single node for each search result suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>,
+        /// predicate evaluation via <see cref="SetResultVisitPredicate"/>, and scraping via <see cref="SetResultPageXPaths(IDictionary{string, string})"/>.
         /// </remarks>
         IPaginatingScraper SetIndividualResultNodeXPath(string xPath);
 
@@ -91,7 +91,17 @@ namespace ScrapeX.Interfaces
         /// <returns>This instance of <see cref="IPaginatingScraper"/>.</returns>
         IPaginatingScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan);
 
-        //relative to result node!!!
+        /// <summary>
+        /// Sets the keys and associated XPaths for retrieving data from the result page.
+        /// Keys are used to identify the individual data points in the callback to the <see cref="IScraper.Go(Action{string, IDictionary{string, string}})"/> method.
+        /// </summary>
+        /// <param name="xPaths"></param>
+        /// <returns>This instance of <see cref="IScraper"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
+        /// <remarks>
+        /// Either this method or <see cref="IScraper.SetTargetPageXPaths(IDictionary{string, string})"/> must be called to scrape some data.
+        /// </remarks>
         IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths);
     }
 }
