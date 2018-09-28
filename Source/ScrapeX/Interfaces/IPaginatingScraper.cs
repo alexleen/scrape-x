@@ -31,7 +31,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
-        /// Value returned by XPath must a the string URL of the next page of results.
+        /// Value returned by XPath must a the string URL of the next page of results relative to the URL specified in <see cref="IScraperFactory.CreatePaginatingScraper(string)"/>.
         /// XPath should return null on the last page of results, which signals the scraper to exit.
         /// </remarks>
         IPaginatingScraper SetNextLinkXPath(string xPath);
