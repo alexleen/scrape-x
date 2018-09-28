@@ -15,6 +15,8 @@ build_script:
     OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
+
+    appveyor PushArtifact Source\ScrapeX\bin\Release\ScrapeX*.nupkg
 test: off
 artifacts:
 - path: .\coverage.xml
