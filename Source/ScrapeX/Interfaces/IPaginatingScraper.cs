@@ -1,8 +1,8 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
 using System;
-using System.Xml.XPath;
 using System.Collections.Generic;
+using System.Xml.XPath;
 
 namespace ScrapeX.Interfaces
 {
@@ -45,7 +45,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
         /// XPath should return a single node for each search result suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>,
-        /// predicate evaluation via <see cref="SetResultVisitPredicate"/>, and scraping via <see cref="SetResultPageXPaths(IDictionary{string, string})"/>.
+        /// predicate evaluation via <see cref="SetResultVisitPredicate"/>, and scraping via <see cref="SetResultPageXPaths(IDictionary{string,string})"/>.
         /// </remarks>
         IPaginatingScraper SetIndividualResultNodeXPath(string xPath);
 
