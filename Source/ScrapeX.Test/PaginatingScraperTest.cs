@@ -326,11 +326,11 @@ namespace ScrapeX.Test
 
             int called = 0;
             mSut.Go((link, dict) =>
-            {
-                called++;
-                Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
-                Assert.AreEqual("map", dict["map"]);
-            });
+                {
+                    called++;
+                    Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
+                    Assert.AreEqual("map", dict["map"]);
+                });
 
             Assert.AreEqual(120, called); //120 results per page
         }
@@ -347,21 +347,21 @@ namespace ScrapeX.Test
 
             int called = 0;
             mSut.Go((link, dict) =>
-            {
-                called++;
+                {
+                    called++;
 
-                //Even numbered calls will be from the target result, odd from the result page
-                if (called % 2 == 0)
-                {
-                    StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                    Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
-                }
-                else
-                {
-                    Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
-                    Assert.AreEqual("map", dict["map"]);
-                }
-            });
+                    //Even numbered calls will be from the target result, odd from the result page
+                    if (called % 2 == 0)
+                    {
+                        StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                        Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
+                    }
+                    else
+                    {
+                        Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
+                        Assert.AreEqual("map", dict["map"]);
+                    }
+                });
 
             Assert.AreEqual(240, called); //Twice for each result (120 results per page)
         }

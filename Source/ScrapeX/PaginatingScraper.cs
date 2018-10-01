@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.XPath;
+using ScrapeX.Interfaces;
 
 [assembly: InternalsVisibleTo("ScrapeX.Test")]
 
