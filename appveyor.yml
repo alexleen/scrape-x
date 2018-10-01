@@ -12,7 +12,7 @@ build_script:
 
     nuget install OpenCover -Version 4.6.831-rc -Source https://www.myget.org/F/opencover/api/v3/index.json
 
-    OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[nunit*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle
+    OpenCover.4.6.831-rc\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test -c Release Source\ScrapeX.Test\ScrapeX.Test.csproj" -filter:"+[*]* -[ScrapeX.Test]*" -output:".\coverage.xml" -returntargetcode -oldStyle -threshold:1
 
     dotnet sonarscanner end /d:sonar.login="ece6946878045182999e7fc3429462861816aed6"
 test: off
