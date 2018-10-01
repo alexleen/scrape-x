@@ -1,6 +1,7 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
 using System;
+using System.Collections.Generic;
 using System.Xml.XPath;
 
 namespace ScrapeX.Interfaces
@@ -30,7 +31,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
-        /// Value returned by XPath must a the string URL of the next page of results.
+        /// Value returned by XPath must be the string URL of the next page of results relative to the URL specified in <see cref="IScraperFactory.CreatePaginatingScraper(string)"/>.
         /// XPath should return null on the last page of results, which signals the scraper to exit.
         /// </remarks>
         IPaginatingScraper SetNextLinkXPath(string xPath);
@@ -43,8 +44,8 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentException"><paramref name="xPath"/> is null, empty, consists only of whitespace characters, or is not a valid XPath expression.</exception>
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
-        /// Node returned by specified XPath must be suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>
-        /// and predicate evaluation via <see cref="SetResultVisitPredicate"/>.
+        /// XPath should return a single node for each search result suitable for link retrieval via <see cref="SetIndividualResultLinkXPath"/>,
+        /// predicate evaluation via <see cref="SetResultVisitPredicate"/>, and scraping via <see cref="SetResultPageXPaths(IDictionary{string,string})"/>.
         /// </remarks>
         IPaginatingScraper SetIndividualResultNodeXPath(string xPath);
 
@@ -57,7 +58,7 @@ namespace ScrapeX.Interfaces
         /// <exception cref="XPathException"><paramref name="xPath"/> is not valid.</exception>
         /// <remarks>
         /// This is the link to a target page that will be scraped. 
-        /// Results will be delivered via the callback of the <see cref="IScraper.Go(Action{string, System.Collections.Generic.IDictionary{string, string}})"/> method.
+        /// Results will be delivered via the callback of the <see cref="IScraper.Go(Action{string, IDictionary{string, string}})"/> method.
         /// </remarks>
         IPaginatingScraper SetIndividualResultLinkXPath(string xPath);
 
@@ -89,5 +90,18 @@ namespace ScrapeX.Interfaces
         /// <param name="timeSpan"></param>
         /// <returns>This instance of <see cref="IPaginatingScraper"/>.</returns>
         IPaginatingScraper ThrottleSearchResultRetrieval(TimeSpan timeSpan);
+
+        /// <summary>
+        /// Sets the keys and associated XPaths for retrieving data from the result page.
+        /// Keys are used to identify the individual data points in the callback to the <see cref="IScraper.Go(Action{string, IDictionary{string, string}})"/> method.
+        /// </summary>
+        /// <param name="xPaths"></param>
+        /// <returns>This instance of <see cref="IScraper"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
+        /// <remarks>
+        /// Either this method or <see cref="IScraper.SetTargetPageXPaths(IDictionary{string, string})"/> must be called to scrape some data.
+        /// </remarks>
+        IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths);
     }
 }

@@ -21,6 +21,7 @@ namespace ScrapeX
         private TimeSpan mPageRetrievalThrottle;
         private Predicate<string> mShouldVisitResult;
         private XPathExpression mPredicateXPath;
+        private IDictionary<string, string> mXPaths;
 
         internal PaginatingScraper(string baseUrl, INavigatorFactory navigatorFactory)
             : base(baseUrl, navigatorFactory)
@@ -95,6 +96,22 @@ namespace ScrapeX
             return this;
         }
 
+        public IPaginatingScraper SetResultPageXPaths(IDictionary<string, string> xPaths)
+        {
+            if (xPaths == null)
+            {
+                throw new ArgumentNullException(nameof(xPaths));
+            }
+
+            if (xPaths.Count == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(xPaths));
+            }
+
+            mXPaths = xPaths;
+            return this;
+        }
+
         public override void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -108,12 +125,12 @@ namespace ScrapeX
 
             do
             {
-                string currentPage = BaseUrl + currentResultsPageUrl;
+                string currentPageUrl = BaseUrl + currentResultsPageUrl;
 
                 //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
                 Thread.Sleep(mPageRetrievalThrottle);
 
-                XPathNavigator searchPage = Get(currentPage);
+                XPathNavigator searchPage = Get(currentPageUrl);
 
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
@@ -124,17 +141,9 @@ namespace ScrapeX
                         continue;
                     }
 
-                    string link = result.SelectSingleNode(mIndividualLinkXPath)?.Value;
+                    ScrapeResultPage(result, currentPageUrl, onTargetRetrieved);
 
-                    if (link == null)
-                    {
-                        continue;
-                    }
-
-                    //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
-                    Thread.Sleep(mResultRetrievalThrottle);
-
-                    ScrapeTarget(link, onTargetRetrieved);
+                    ScrapeTargetPage(result, onTargetRetrieved);
                 }
 
                 //next link's href. Won't exist on last page.
@@ -155,17 +164,69 @@ namespace ScrapeX
                 throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultNodeXPath)}.");
             }
 
-            if (mIndividualLinkXPath == null)
-            {
-                throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
-            }
-
             if (mNextLinkXPath == null)
             {
                 throw new InvalidOperationException($"Must first call {nameof(SetNextLinkXPath)}.");
             }
 
-            base.ValidateMinimalOptions();
+            if (IsSetupToScrapeTarget)
+            {
+                if (mIndividualLinkXPath == null)
+                {
+                    throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
+                }
+
+                base.ValidateMinimalOptions();
+            }
+            else
+            {
+                if (mXPaths == null)
+                {
+                    throw new InvalidOperationException($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} and/or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
+                }
+
+                if (mIndividualLinkXPath != null)
+                {
+                    throw new InvalidOperationException($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Scrapes result page, if configured.
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <param name="currentPageUrl"></param>
+        /// <param name="onTargetRetrieved"></param>
+        private void ScrapeResultPage(XPathNavigator navigator, string currentPageUrl, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            if (mXPaths != null)
+            {
+                Scrape(navigator, mXPaths, currentPageUrl, onTargetRetrieved);
+            }
+        }
+
+        /// <summary>
+        /// Scrapes target page, if configured.
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <param name="onTargetRetrieved"></param>
+        private void ScrapeTargetPage(XPathNavigator navigator, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            if (IsSetupToScrapeTarget)
+            {
+                string link = navigator.SelectSingleNode(mIndividualLinkXPath)?.Value;
+
+                if (link == null)
+                {
+                    return;
+                }
+
+                //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
+                Thread.Sleep(mResultRetrievalThrottle);
+
+                ScrapeTarget(link, onTargetRetrieved);
+            }
         }
     }
 }

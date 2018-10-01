@@ -38,6 +38,8 @@ namespace ScrapeX.Test
             mSut = new PaginatingScraper(BaseUrl, navigatorFactory);
         }
 
+        #region Exceptions & Validation
+
         /// <summary>
         /// Strings that will fail the string.IsNullOrWhiteSpace(...) check.
         /// </summary>
@@ -115,6 +117,18 @@ namespace ScrapeX.Test
         }
 
         [Test]
+        public void SetSetResultPageXPaths_ShouldThrow_WhenXPathsIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.SetResultPageXPaths(null));
+        }
+
+        [Test]
+        public void SetSetResultPageXPaths_ShouldThrow_WhenXPathsIsEmpty()
+        {
+            Assert.Throws<ArgumentException>(() => mSut.SetResultPageXPaths(new Dictionary<string, string>()));
+        }
+
+        [Test]
         public void Go_ShouldThrow_WhenCallbackIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => mSut.Go(null));
@@ -135,10 +149,12 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNull()
+        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNull_AndScrapingTarget()
         {
             mSut.SetResultsStartPage("/");
             mSut.SetIndividualResultNodeXPath("/");
+            mSut.SetNextLinkXPath("/");
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "key", "/" } });
 
             Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)}.");
         }
@@ -154,15 +170,31 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenTargetPageXPathsAreNull()
+        public void Go_ShouldThrow_WhenResultPageXPathsAreNull_AndNotScrapingTarget()
         {
             mSut.SetResultsStartPage("/");
             mSut.SetIndividualResultNodeXPath("/");
             mSut.SetIndividualResultLinkXPath("/");
             mSut.SetNextLinkXPath("/");
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTargetPageXPaths)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} and/or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
         }
+
+        [Test]
+        public void Go_ShouldThrow_WhenIndividualLinkXPathIsNotNull_AndNotScrapingTarget()
+        {
+            mSut.SetResultsStartPage("/");
+            mSut.SetIndividualResultNodeXPath("/");
+            mSut.SetIndividualResultLinkXPath("/");
+            mSut.SetNextLinkXPath("/");
+            mSut.SetResultPageXPaths(new Dictionary<string, string> { { "key", "/" } });
+
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
+        }
+
+        #endregion
+
+        #region Scraping Tests
 
         /// <summary>
         /// This test will exit after the first result page since the target page will be returned for "page 2".
@@ -182,7 +214,7 @@ namespace ScrapeX.Test
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                    Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
                 });
 
             Assert.AreEqual(120, called); //120 results per page
@@ -226,7 +258,7 @@ namespace ScrapeX.Test
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                    Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
                 });
 
             Assert.AreEqual(45, called); //Only 45 of the 120 are 3br
@@ -251,7 +283,7 @@ namespace ScrapeX.Test
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                    Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
                 });
 
             Assert.AreEqual(120, called); //120 results per page
@@ -278,10 +310,62 @@ namespace ScrapeX.Test
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
-                    Assert.AreEqual(dict["br"], "3BR"); //The same target page is returned for each link, so they should all be the same value
+                    Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
                 });
 
             Assert.AreEqual(45, called); //Only 45 of the 120 are 3br
         }
+
+        [Test]
+        public void Go_ShouldScrapeResultPage_WhenConfigured()
+        {
+            mSut.SetResultsStartPage(ResultsStartPage);
+            mSut.SetIndividualResultNodeXPath("//*[@id=\"sortable-results\"]/ul/li");
+            mSut.SetNextLinkXPath("//*[@id=\"searchform\"]/div[3]/div[3]/span[2]/a[3]/@href");
+            mSut.SetResultPageXPaths(new Dictionary<string, string> { { "map", "//span[@class = 'maptag']" } });
+
+            int called = 0;
+            mSut.Go((link, dict) =>
+                {
+                    called++;
+                    Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
+                    Assert.AreEqual("map", dict["map"]);
+                });
+
+            Assert.AreEqual(120, called); //120 results per page
+        }
+
+        [Test]
+        public void Go_ShouldScrapeResultPage_AndTargetPage_WhenConfigured()
+        {
+            mSut.SetResultsStartPage(ResultsStartPage);
+            mSut.SetIndividualResultNodeXPath("//*[@id=\"sortable-results\"]/ul/li");
+            mSut.SetIndividualResultLinkXPath("a/@href");
+            mSut.SetNextLinkXPath("//*[@id=\"searchform\"]/div[3]/div[3]/span[2]/a[3]/@href");
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
+            mSut.SetResultPageXPaths(new Dictionary<string, string> { { "map", "//span[@class = 'maptag']" } });
+
+            int called = 0;
+            mSut.Go((link, dict) =>
+                {
+                    called++;
+
+                    //Even numbered calls will be from the target result, odd from the result page
+                    if (called % 2 == 0)
+                    {
+                        StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
+                        Assert.AreEqual("3BR", dict["br"]); //The same target page is returned for each link, so they should all be the same value
+                    }
+                    else
+                    {
+                        Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
+                        Assert.AreEqual("map", dict["map"]);
+                    }
+                });
+
+            Assert.AreEqual(240, called); //Twice for each result (120 results per page)
+        }
+
+        #endregion
     }
 }

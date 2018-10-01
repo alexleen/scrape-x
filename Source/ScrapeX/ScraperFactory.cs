@@ -1,4 +1,4 @@
-// Copyright © 2018 Alex Leendertsen
+// Copyright Â© 2018 Alex Leendertsen
 
 using ScrapeX.Interfaces;
 
