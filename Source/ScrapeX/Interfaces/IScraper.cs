@@ -36,7 +36,7 @@ namespace ScrapeX.Interfaces
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
         /// </summary>
         /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by 
-        /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> or <see cref="IPaginatingScraper.SetResultPageXPaths(IDictionary{string, string})"/>.</param>
+        /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> and/or <see cref="IPaginatingScraper.SetResultPageXPaths(IDictionary{string, string})"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
     }

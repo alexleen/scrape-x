@@ -125,12 +125,12 @@ namespace ScrapeX
 
             do
             {
-                string currentPage = BaseUrl + currentResultsPageUrl;
+                string currentPageUrl = BaseUrl + currentResultsPageUrl;
 
                 //TimeSpans are zero by default, so if mThrottle isn't set this doesn't sleep
                 Thread.Sleep(mPageRetrievalThrottle);
 
-                XPathNavigator searchPage = Get(currentPage);
+                XPathNavigator searchPage = Get(currentPageUrl);
 
                 XPathNodeIterator searchResultNodes = searchPage.Select(mIndividualNodeXPath);
 
@@ -141,7 +141,7 @@ namespace ScrapeX
                         continue;
                     }
 
-                    ScrapeResultPage(onTargetRetrieved, currentPage, result);
+                    ScrapeResultPage(result, currentPageUrl, onTargetRetrieved);
 
                     ScrapeTargetPage(result, onTargetRetrieved);
                 }
@@ -182,7 +182,7 @@ namespace ScrapeX
             {
                 if (mXPaths == null)
                 {
-                    throw new InvalidOperationException($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
+                    throw new InvalidOperationException($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} and/or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
                 }
 
                 if (mIndividualLinkXPath != null)
@@ -195,14 +195,14 @@ namespace ScrapeX
         /// <summary>
         /// Scrapes result page, if configured.
         /// </summary>
-        /// <param name="onTargetRetrieved"></param>
-        /// <param name="currentPage"></param>
         /// <param name="navigator"></param>
-        private void ScrapeResultPage(Action<string, IDictionary<string, string>> onTargetRetrieved, string currentPage, XPathNavigator navigator)
+        /// <param name="currentPageUrl"></param>
+        /// <param name="onTargetRetrieved"></param>
+        private void ScrapeResultPage(XPathNavigator navigator, string currentPageUrl, Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (mXPaths != null)
             {
-                Scrape(currentPage, navigator, mXPaths, onTargetRetrieved);
+                Scrape(navigator, mXPaths, currentPageUrl, onTargetRetrieved);
             }
         }
 

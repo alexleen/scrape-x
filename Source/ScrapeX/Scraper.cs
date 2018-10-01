@@ -72,18 +72,18 @@ namespace ScrapeX
         protected void ScrapeTarget(string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             XPathNavigator listing = Get(link);
-            Scrape(link, listing, mXPaths, onTargetRetrieved);
+            Scrape(listing, mXPaths, link, onTargetRetrieved);
         }
 
         /// <summary>
         /// Scrapes the specified <paramref name="navigator"/> using the specified <paramref name="xPaths"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
         /// <paramref name="link"/> is only used for callback. <paramref name="link"/> is NOT retrieved.
         /// </summary>
-        /// <param name="link"></param>
         /// <param name="navigator"></param>
         /// <param name="xPaths"></param>
+        /// <param name="link"></param>
         /// <param name="onTargetRetrieved"></param>
-        protected static void Scrape(string link, XPathNavigator navigator, IDictionary<string, string> xPaths, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        protected static void Scrape(XPathNavigator navigator, IDictionary<string, string> xPaths, string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             IDictionary<string, string> results = new Dictionary<string, string>();
 
