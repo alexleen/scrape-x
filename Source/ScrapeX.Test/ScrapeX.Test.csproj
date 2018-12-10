@@ -23,14 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="HTML\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="HTML\cl-apa-listing.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="HTML\cl-apa-search-page.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HTML\wiki-apple-cup.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -11,6 +11,8 @@ namespace ScrapeX.Interfaces
     /// </summary>
     public interface IScraper
     {
+
+
         /// <summary>
         /// Use this HttpClient instead of the built in <see cref="HtmlWeb"/>.
         /// </summary>
@@ -32,6 +34,8 @@ namespace ScrapeX.Interfaces
         /// </remarks>
         IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths);
 
+        IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableRowXPaths);
+
         /// <summary>
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
         /// </summary>
@@ -39,5 +43,7 @@ namespace ScrapeX.Interfaces
         /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> and/or <see cref="IPaginatingScraper.SetResultPageXPaths(IDictionary{string, string})"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
+
+        void GoTables(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved);
     }
 }

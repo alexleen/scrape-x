@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using HtmlAgilityPack;
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml.XPath;
-using HtmlAgilityPack;
-using ScrapeX.Interfaces;
 
 namespace ScrapeX
 {
@@ -71,36 +71,32 @@ namespace ScrapeX
             ScrapeTarget(BaseUrl, onTargetRetrieved);
         }
 
-        public void Go(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved)
+        public void GoTables(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved)
         {
-            IDictionary<string, IList<IList<string>>> result = new Dictionary<string, IList<IList<string>>>(); 
-            
+            IDictionary<string, IList<IList<string>>> result = new Dictionary<string, IList<IList<string>>>();
+
             XPathNavigator listing = Get(BaseUrl);
 
             foreach (KeyValuePair<string, IEnumerable<string>> kvp in mTableRowXPaths)
             {
                 IList<IList<string>> colValues = new List<IList<string>>();
+                int currCol = 0;
 
-                foreach (XPathNavigator tableNav in listing.Select(kvp.Key))
+                foreach (string cellXPath in kvp.Value)
                 {
-                    int currCol = 0;
-
-                    foreach (string cellXPath in kvp.Value)
+                    if (colValues.Count <= currCol)
                     {
-                        if (colValues.Count <= currCol)
-                        {
-                            colValues.Add(new List<string>());
-                        }
-
-                        foreach (XPathNavigator cellNav in tableNav.Select(cellXPath))
-                        {
-                            colValues[currCol].Add(cellNav.Value);
-                        }
-
-                        currCol++;
+                        colValues.Add(new List<string>());
                     }
+
+                    foreach (XPathNavigator cellNav in listing.Select(cellXPath))
+                    {
+                        colValues[currCol].Add(cellNav.Value);
+                    }
+
+                    currCol++;
                 }
-                
+
                 result.Add(kvp.Key, colValues);
             }
 
