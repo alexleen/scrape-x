@@ -49,13 +49,7 @@ namespace ScrapeX.Interfaces
         /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by 
         /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> and/or <see cref="IPaginatingScraper.SetResultPageXPaths(IDictionary{string, string})"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
-        void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
-
-        /// <summary>
-        /// TODO combine with above?
-        /// </summary>
-        /// <param name="onTablesRetrieved"></param>
         /// <exception cref="XPathException">An XPath is not valid.</exception>
-        void GoTables(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTablesRetrieved);
+        void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved);
     }
 }

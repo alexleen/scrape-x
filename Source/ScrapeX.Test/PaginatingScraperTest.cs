@@ -137,7 +137,7 @@ namespace ScrapeX.Test
         [Test]
         public void Go_ShouldThrow_WhenResultsStartPageUrlIsNull()
         {
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetResultsStartPage)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetResultsStartPage)}.");
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace ScrapeX.Test
         {
             mSut.SetResultsStartPage("/");
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultNodeXPath)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultNodeXPath)}.");
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace ScrapeX.Test
             mSut.SetNextLinkXPath("/");
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "key", "/" } });
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)}.");
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace ScrapeX.Test
             mSut.SetIndividualResultNodeXPath("/");
             mSut.SetIndividualResultLinkXPath("/");
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetNextLinkXPath)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetNextLinkXPath)}.");
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace ScrapeX.Test
             mSut.SetIndividualResultLinkXPath("/");
             mSut.SetNextLinkXPath("/");
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} and/or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} and/or {nameof(IPaginatingScraper.SetResultPageXPaths)} in order to scrape data.");
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace ScrapeX.Test
             mSut.SetNextLinkXPath("/");
             mSut.SetResultPageXPaths(new Dictionary<string, string> { { "key", "/" } });
 
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Possible misconfiguration: {nameof(IPaginatingScraper.SetIndividualResultLinkXPath)} should not be called when not scraping target result pages because it has no effect.");
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
@@ -234,7 +234,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) => { called++; });
+            mSut.Go((link, dict, tables) => { called++; });
 
             Assert.AreEqual(0, called);
         }
@@ -254,7 +254,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
@@ -279,7 +279,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
@@ -306,7 +306,7 @@ namespace ScrapeX.Test
             mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
                     StringAssert.StartsWith("https://pullman.craigslist.org/apa/d/", link);
@@ -325,7 +325,7 @@ namespace ScrapeX.Test
             mSut.SetResultPageXPaths(new Dictionary<string, string> { { "map", "//span[@class = 'maptag']" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
                     Assert.AreEqual($"{BaseUrl}{ResultsStartPage}", link);
@@ -346,7 +346,7 @@ namespace ScrapeX.Test
             mSut.SetResultPageXPaths(new Dictionary<string, string> { { "map", "//span[@class = 'maptag']" } });
 
             int called = 0;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     called++;
 

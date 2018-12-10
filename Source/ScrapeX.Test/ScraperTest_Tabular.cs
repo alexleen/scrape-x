@@ -66,10 +66,10 @@ namespace ScrapeX.Test
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.GoTables((link, dict) =>
+            mSut.Go((link, dict, tables) =>
             {
                 resultLink = link;
-                result = dict;
+                result = tables;
             });
 
             Assert.AreEqual(BaseUrl, resultLink);
@@ -95,10 +95,10 @@ namespace ScrapeX.Test
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.GoTables((link, dict) =>
+            mSut.Go((link, dict, tables) =>
             {
                 resultLink = link;
-                result = dict;
+                result = tables;
             });
 
             Assert.AreEqual(BaseUrl, resultLink);
@@ -137,10 +137,10 @@ namespace ScrapeX.Test
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.GoTables((link, dict) =>
+            mSut.Go((link, dict, tables) =>
             {
                 resultLink = link;
-                result = dict;
+                result = tables;
             });
 
             Assert.AreEqual(BaseUrl, resultLink);

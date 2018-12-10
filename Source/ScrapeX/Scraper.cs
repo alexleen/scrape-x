@@ -69,7 +69,7 @@ namespace ScrapeX
             return this;
         }
 
-        public virtual void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        public virtual void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
             {
@@ -81,7 +81,48 @@ namespace ScrapeX
             ScrapeTarget(BaseUrl, onTargetRetrieved);
         }
 
-        public void GoTables(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTablesRetrieved)
+        /// <summary>
+        /// Retrieves the specified link, scrapes it, and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// </summary>
+        /// <param name="link"></param>
+        /// <param name="onTargetRetrieved"></param>
+        protected void ScrapeTarget(string link, Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
+        {
+            XPathNavigator listing = Get(link);
+            Scrape(listing, mXPaths, link, onTargetRetrieved);
+        }
+
+        /// <summary>
+        /// Scrapes the specified <paramref name="navigator"/> using the specified <paramref name="xPaths"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// <paramref name="link"/> is only used for callback. <paramref name="link"/> is NOT retrieved.
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <param name="xPaths"></param>
+        /// <param name="link"></param>
+        /// <param name="onTargetRetrieved"></param>
+        protected void Scrape(XPathNavigator navigator, IDictionary<string, string> xPaths, string link, Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
+        {
+            IDictionary<string, string> results = new Dictionary<string, string>();
+
+            if (xPaths != null)
+            {
+                foreach (KeyValuePair<string, string> kvp in xPaths)
+                {
+                    results[kvp.Key] = navigator.SelectSingleNode(XPathExpression.Compile(kvp.Value))?.Value;
+                }
+            }
+
+            IDictionary<string, IEnumerable<IEnumerable<string>>> tables = null;
+
+            if (mTableCellXPaths != null)
+            {
+                tables = ScrapeTables();
+            }
+
+            onTargetRetrieved(link, results, tables);
+        }
+
+        private IDictionary<string, IEnumerable<IEnumerable<string>>> ScrapeTables()
         {
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = new Dictionary<string, IEnumerable<IEnumerable<string>>>();
 
@@ -110,45 +151,14 @@ namespace ScrapeX
                 result.Add(kvp.Key, colValues);
             }
 
-            onTablesRetrieved(BaseUrl, result);
-        }
-
-        /// <summary>
-        /// Retrieves the specified link, scrapes it, and invokes <paramref name="onTargetRetrieved"/> with the results.
-        /// </summary>
-        /// <param name="link"></param>
-        /// <param name="onTargetRetrieved"></param>
-        protected void ScrapeTarget(string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
-        {
-            XPathNavigator listing = Get(link);
-            Scrape(listing, mXPaths, link, onTargetRetrieved);
-        }
-
-        /// <summary>
-        /// Scrapes the specified <paramref name="navigator"/> using the specified <paramref name="xPaths"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
-        /// <paramref name="link"/> is only used for callback. <paramref name="link"/> is NOT retrieved.
-        /// </summary>
-        /// <param name="navigator"></param>
-        /// <param name="xPaths"></param>
-        /// <param name="link"></param>
-        /// <param name="onTargetRetrieved"></param>
-        protected static void Scrape(XPathNavigator navigator, IDictionary<string, string> xPaths, string link, Action<string, IDictionary<string, string>> onTargetRetrieved)
-        {
-            IDictionary<string, string> results = new Dictionary<string, string>();
-
-            foreach (KeyValuePair<string, string> kvp in xPaths)
-            {
-                results[kvp.Key] = navigator.SelectSingleNode(XPathExpression.Compile(kvp.Value))?.Value;
-            }
-
-            onTargetRetrieved(link, results);
+            return result;
         }
 
         protected virtual void ValidateMinimalOptions()
         {
-            if (mXPaths == null)
+            if (mXPaths == null && mTableCellXPaths == null)
             {
-                throw new InvalidOperationException($"Must first call {nameof(SetTargetPageXPaths)}.");
+                throw new InvalidOperationException($"Must first call either {nameof(SetTargetPageXPaths)} or {nameof(SetTableXPaths)}.");
             }
         }
 

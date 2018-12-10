@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.XPath;
-using ScrapeX.Interfaces;
 
 [assembly: InternalsVisibleTo("ScrapeX.Test")]
 
@@ -112,7 +112,7 @@ namespace ScrapeX
             return this;
         }
 
-        public override void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        public override void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
             {
@@ -198,7 +198,7 @@ namespace ScrapeX
         /// <param name="navigator"></param>
         /// <param name="currentPageUrl"></param>
         /// <param name="onTargetRetrieved"></param>
-        private void ScrapeResultPage(XPathNavigator navigator, string currentPageUrl, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        private void ScrapeResultPage(XPathNavigator navigator, string currentPageUrl, Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (mXPaths != null)
             {
@@ -211,7 +211,7 @@ namespace ScrapeX
         /// </summary>
         /// <param name="navigator"></param>
         /// <param name="onTargetRetrieved"></param>
-        private void ScrapeTargetPage(XPathNavigator navigator, Action<string, IDictionary<string, string>> onTargetRetrieved)
+        private void ScrapeTargetPage(XPathNavigator navigator, Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (IsSetupToScrapeTarget)
             {

@@ -1,14 +1,14 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
+using HtmlAgilityPack;
+using NSubstitute;
+using NUnit.Framework;
+using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Xml.XPath;
-using HtmlAgilityPack;
-using NSubstitute;
-using NUnit.Framework;
-using ScrapeX.Interfaces;
 
 namespace ScrapeX.Test
 {
@@ -72,7 +72,7 @@ namespace ScrapeX.Test
         [Test]
         public void Go_ShouldThrow_WhenTargetPageXPathsAreNull()
         {
-            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTargetPageXPaths)}.");
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} or {nameof(IScraper.SetTableXPaths)}.");
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace ScrapeX.Test
 
             string receivedLink = null;
             IDictionary<string, string> values = null;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     receivedLink = link;
                     values = dict;
@@ -100,7 +100,7 @@ namespace ScrapeX.Test
 
             string receivedLink = null;
             IDictionary<string, string> values = null;
-            mSut.Go((link, dict) =>
+            mSut.Go((link, dict, tables) =>
                 {
                     receivedLink = link;
                     values = dict;
