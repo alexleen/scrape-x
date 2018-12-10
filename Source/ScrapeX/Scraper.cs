@@ -17,6 +17,7 @@ namespace ScrapeX
 
         private HttpClient mHttpClient;
         private IDictionary<string, string> mXPaths;
+        private IDictionary<string, IEnumerable<string>> mTableRowXPaths;
 
         internal Scraper(string baseUrl, INavigatorFactory navigatorFactory)
         {
@@ -52,6 +53,12 @@ namespace ScrapeX
             return this;
         }
 
+        public IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableRowXPaths)
+        {
+            mTableRowXPaths = tableRowXPaths;
+            return this;
+        }
+
         public virtual void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -62,6 +69,42 @@ namespace ScrapeX
             ValidateMinimalOptions();
 
             ScrapeTarget(BaseUrl, onTargetRetrieved);
+        }
+
+        public void Go(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved)
+        {
+            IDictionary<string, IList<IList<string>>> result = new Dictionary<string, IList<IList<string>>>(); 
+            
+            XPathNavigator listing = Get(BaseUrl);
+
+            foreach (KeyValuePair<string, IEnumerable<string>> kvp in mTableRowXPaths)
+            {
+                IList<IList<string>> colValues = new List<IList<string>>();
+
+                foreach (XPathNavigator tableNav in listing.Select(kvp.Key))
+                {
+                    int currCol = 0;
+
+                    foreach (string cellXPath in kvp.Value)
+                    {
+                        if (colValues.Count <= currCol)
+                        {
+                            colValues.Add(new List<string>());
+                        }
+
+                        foreach (XPathNavigator cellNav in tableNav.Select(cellXPath))
+                        {
+                            colValues[currCol].Add(cellNav.Value);
+                        }
+
+                        currCol++;
+                    }
+                }
+                
+                result.Add(kvp.Key, colValues);
+            }
+
+            onTablesRetrieved(BaseUrl, result);
         }
 
         /// <summary>
