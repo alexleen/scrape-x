@@ -11,8 +11,6 @@ namespace ScrapeX.Interfaces
     /// </summary>
     public interface IScraper
     {
-
-
         /// <summary>
         /// Use this HttpClient instead of the built in <see cref="HtmlWeb"/>.
         /// </summary>
@@ -34,7 +32,16 @@ namespace ScrapeX.Interfaces
         /// </remarks>
         IScraper SetTargetPageXPaths(IDictionary<string, string> xPaths);
 
-        IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableRowXPaths);
+        /// <summary>
+        /// Sets the table cell XPaths for retrieving each table.
+        /// Each key in the dictionary represents a table. Values represent each cell that is to be scraped.       
+        /// Keys can be any string desired to identify the table's data in the callback to the <see cref="Go"/> method.
+        /// </summary>
+        /// <param name="tableCellXPaths"></param>
+        /// <returns>This instance of <see cref="IScraper"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
+        IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableCellXPaths);
 
         /// <summary>
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
@@ -44,6 +51,11 @@ namespace ScrapeX.Interfaces
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
 
-        void GoTables(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved);
+        /// <summary>
+        /// TODO combine with above?
+        /// </summary>
+        /// <param name="onTablesRetrieved"></param>
+        /// <exception cref="XPathException">An XPath is not valid.</exception>
+        void GoTables(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTablesRetrieved);
     }
 }

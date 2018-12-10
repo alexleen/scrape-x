@@ -5,6 +5,7 @@ using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Xml.XPath;
 
@@ -32,6 +33,18 @@ namespace ScrapeX.Test
         }
 
         [Test]
+        public void SetTableXPaths_ShouldThrow_WhenXPathsIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.SetTableXPaths(null));
+        }
+
+        [Test]
+        public void SetTableXPaths_ShouldThrow_WhenXPathsIsEmpty()
+        {
+            Assert.Throws<ArgumentException>(() => mSut.SetTableXPaths(new Dictionary<string, IEnumerable<string>>()));
+        }
+
+        [Test]
         public void Go_ShouldScrapeSingleTable()
         {
             const string tableKey = "WSU Coaching";
@@ -51,23 +64,16 @@ namespace ScrapeX.Test
                 }
             });
 
-            string resultLink;
-            IDictionary<string, IList<IList<string>>> result = null;
+            string resultLink = null;
+            IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
             mSut.GoTables((link, dict) =>
             {
                 resultLink = link;
                 result = dict;
             });
 
-            Assert.AreEqual(8, result[tableKey].Count);
-            Assert.AreEqual(14, result[tableKey][0].Count);
-            Assert.AreEqual(14, result[tableKey][1].Count);
-            Assert.AreEqual(14, result[tableKey][2].Count);
-            Assert.AreEqual(14, result[tableKey][3].Count);
-            Assert.AreEqual(14, result[tableKey][4].Count);
-            Assert.AreEqual(14, result[tableKey][5].Count);
-            Assert.AreEqual(14, result[tableKey][6].Count);
-            Assert.AreEqual(14, result[tableKey][7].Count);
+            Assert.AreEqual(BaseUrl, resultLink);
+            AssertSingleTable(tableKey, result);
         }
 
         [Test]
@@ -87,20 +93,16 @@ namespace ScrapeX.Test
                 }
             });
 
-            string resultLink;
-            IDictionary<string, IList<IList<string>>> result = null;
+            string resultLink = null;
+            IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
             mSut.GoTables((link, dict) =>
             {
                 resultLink = link;
                 result = dict;
             });
 
-            Assert.AreEqual(5, result[tableKey].Count);
-            Assert.AreEqual(112, result[tableKey][0].Count);
-            Assert.AreEqual(111, result[tableKey][1].Count);
-            Assert.AreEqual(111, result[tableKey][2].Count);
-            Assert.AreEqual(111, result[tableKey][3].Count);
-            Assert.AreEqual(111, result[tableKey][4].Count);
+            Assert.AreEqual(BaseUrl, resultLink);
+            AssertSplitTable(tableKey, result);
         }
 
         [Test]
@@ -133,30 +135,42 @@ namespace ScrapeX.Test
                 }
             });
 
-            string resultLink;
-            IDictionary<string, IList<IList<string>>> result = null;
+            string resultLink = null;
+            IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
             mSut.GoTables((link, dict) =>
             {
                 resultLink = link;
                 result = dict;
             });
 
-            Assert.AreEqual(5, result[tableKey1].Count);
-            Assert.AreEqual(112, result[tableKey1][0].Count);
-            Assert.AreEqual(111, result[tableKey1][1].Count);
-            Assert.AreEqual(111, result[tableKey1][2].Count);
-            Assert.AreEqual(111, result[tableKey1][3].Count);
-            Assert.AreEqual(111, result[tableKey1][4].Count);
+            Assert.AreEqual(BaseUrl, resultLink);
 
-            Assert.AreEqual(8, result[tableKey2].Count);
-            Assert.AreEqual(14, result[tableKey2][0].Count);
-            Assert.AreEqual(14, result[tableKey2][1].Count);
-            Assert.AreEqual(14, result[tableKey2][2].Count);
-            Assert.AreEqual(14, result[tableKey2][3].Count);
-            Assert.AreEqual(14, result[tableKey2][4].Count);
-            Assert.AreEqual(14, result[tableKey2][5].Count);
-            Assert.AreEqual(14, result[tableKey2][6].Count);
-            Assert.AreEqual(14, result[tableKey2][7].Count);
+            AssertSplitTable(tableKey1, result);
+
+            AssertSingleTable(tableKey2, result);
+        }
+
+        private static void AssertSplitTable(string tableKey, IDictionary<string, IEnumerable<IEnumerable<string>>> result)
+        {
+            Assert.AreEqual(5, result[tableKey].Count());
+            Assert.AreEqual(112, result[tableKey].ElementAt(0).Count());
+            Assert.AreEqual(111, result[tableKey].ElementAt(1).Count());
+            Assert.AreEqual(111, result[tableKey].ElementAt(2).Count());
+            Assert.AreEqual(111, result[tableKey].ElementAt(3).Count());
+            Assert.AreEqual(111, result[tableKey].ElementAt(4).Count());
+        }
+
+        private static void AssertSingleTable(string tableKey, IDictionary<string, IEnumerable<IEnumerable<string>>> result)
+        {
+            Assert.AreEqual(8, result[tableKey].Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(0).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(1).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(2).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(3).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(4).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(5).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(6).Count());
+            Assert.AreEqual(14, result[tableKey].ElementAt(7).Count());
         }
     }
 }

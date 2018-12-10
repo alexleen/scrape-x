@@ -17,7 +17,7 @@ namespace ScrapeX
 
         private HttpClient mHttpClient;
         private IDictionary<string, string> mXPaths;
-        private IDictionary<string, IEnumerable<string>> mTableRowXPaths;
+        private IDictionary<string, IEnumerable<string>> mTableCellXPaths;
 
         internal Scraper(string baseUrl, INavigatorFactory navigatorFactory)
         {
@@ -53,9 +53,19 @@ namespace ScrapeX
             return this;
         }
 
-        public IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableRowXPaths)
+        public IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableCellXPaths)
         {
-            mTableRowXPaths = tableRowXPaths;
+            if (tableCellXPaths == null)
+            {
+                throw new ArgumentNullException(nameof(tableCellXPaths));
+            }
+
+            if (tableCellXPaths.Count == 0)
+            {
+                throw new ArgumentException("Value cannot be an empty collection.", nameof(tableCellXPaths));
+            }
+
+            mTableCellXPaths = tableCellXPaths;
             return this;
         }
 
@@ -71,13 +81,13 @@ namespace ScrapeX
             ScrapeTarget(BaseUrl, onTargetRetrieved);
         }
 
-        public void GoTables(Action<string, IDictionary<string, IList<IList<string>>>> onTablesRetrieved)
+        public void GoTables(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTablesRetrieved)
         {
-            IDictionary<string, IList<IList<string>>> result = new Dictionary<string, IList<IList<string>>>();
+            IDictionary<string, IEnumerable<IEnumerable<string>>> result = new Dictionary<string, IEnumerable<IEnumerable<string>>>();
 
             XPathNavigator listing = Get(BaseUrl);
 
-            foreach (KeyValuePair<string, IEnumerable<string>> kvp in mTableRowXPaths)
+            foreach (KeyValuePair<string, IEnumerable<string>> kvp in mTableCellXPaths)
             {
                 IList<IList<string>> colValues = new List<IList<string>>();
                 int currCol = 0;
@@ -89,7 +99,7 @@ namespace ScrapeX
                         colValues.Add(new List<string>());
                     }
 
-                    foreach (XPathNavigator cellNav in listing.Select(cellXPath))
+                    foreach (XPathNavigator cellNav in listing.Select(XPathExpression.Compile(cellXPath)))
                     {
                         colValues[currCol].Add(cellNav.Value);
                     }
@@ -128,7 +138,7 @@ namespace ScrapeX
 
             foreach (KeyValuePair<string, string> kvp in xPaths)
             {
-                results[kvp.Key] = navigator.SelectSingleNode(kvp.Value)?.Value;
+                results[kvp.Key] = navigator.SelectSingleNode(XPathExpression.Compile(kvp.Value))?.Value;
             }
 
             onTargetRetrieved(link, results);
