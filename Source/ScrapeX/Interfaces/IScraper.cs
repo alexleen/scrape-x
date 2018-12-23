@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Xml.XPath;
+using HtmlAgilityPack;
 
 namespace ScrapeX.Interfaces
 {
@@ -39,15 +41,31 @@ namespace ScrapeX.Interfaces
         /// </summary>
         /// <param name="tableCellXPaths"></param>
         /// <returns>This instance of <see cref="IScraper"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="xPaths"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="xPaths"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="tableCellXPaths"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="tableCellXPaths"/> is empty.</exception>
         IScraper SetTableXPaths(IDictionary<string, IEnumerable<string>> tableCellXPaths);
 
         /// <summary>
         /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
         /// </summary>
+        /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by <see cref="SetTargetPageXPaths(IDictionary{string, string})"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
+        /// <exception cref="XPathException">An XPath is not valid.</exception>
+        void Go(Action<string, IDictionary<string, string>> onTargetRetrieved);
+
+        /// <summary>
+        /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
+        /// </summary>
+        /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by <see cref="SetTableXPaths"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
+        /// <exception cref="XPathException">An XPath is not valid.</exception>
+        void Go(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved);
+
+        /// <summary>
+        /// Begins synchronously scraping. Will call <paramref name="onTargetRetrieved"/> for each scraped target page.
+        /// </summary>
         /// <param name="onTargetRetrieved">Callback with a link as well as keys and their corresponding values as defined by 
-        /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> and/or <see cref="IPaginatingScraper.SetResultPageXPaths(IDictionary{string, string})"/>.</param>
+        /// <see cref="SetTargetPageXPaths(IDictionary{string, string})"/> and <see cref="SetTableXPaths"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="onTargetRetrieved"/> is null.</exception>
         /// <exception cref="XPathException">An XPath is not valid.</exception>
         void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved);

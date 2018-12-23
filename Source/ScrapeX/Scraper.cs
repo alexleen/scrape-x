@@ -1,11 +1,11 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
-using HtmlAgilityPack;
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX
 {
@@ -69,6 +69,30 @@ namespace ScrapeX
             return this;
         }
 
+        public void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            if (onTargetRetrieved == null)
+            {
+                throw new ArgumentNullException(nameof(onTargetRetrieved));
+            }
+
+            ValidateMinimalOptions();
+
+            ScrapeTarget(BaseUrl, (link, item, table) => onTargetRetrieved(link, item));
+        }
+
+        public void Go(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
+        {
+            if (onTargetRetrieved == null)
+            {
+                throw new ArgumentNullException(nameof(onTargetRetrieved));
+            }
+
+            ValidateMinimalOptions();
+
+            ScrapeTarget(BaseUrl, (link, item, table) => onTargetRetrieved(link, table));
+        }
+
         public virtual void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -82,7 +106,7 @@ namespace ScrapeX
         }
 
         /// <summary>
-        /// Retrieves the specified link, scrapes it, and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// Retrieves the specified link, scrapes it (both individual & tables, if configured), and invokes <paramref name="onTargetRetrieved"/> with the results.
         /// </summary>
         /// <param name="link"></param>
         /// <param name="onTargetRetrieved"></param>

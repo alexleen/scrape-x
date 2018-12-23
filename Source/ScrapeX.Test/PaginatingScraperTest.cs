@@ -129,9 +129,21 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenCallbackIsNull()
+        public void Go_Individual_ShouldThrow_WhenCallbackIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => mSut.Go(null));
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, string>>)null));
+        }
+
+        [Test]
+        public void Go_Tables_ShouldThrow_WhenCallbackIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>>)null));
+        }
+
+        [Test]
+        public void Go_Both_ShouldThrow_WhenCallbackIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>>)null));
         }
 
         [Test]

@@ -1,14 +1,14 @@
 ﻿// Copyright © 2018 Alex Leendertsen
 
-using HtmlAgilityPack;
-using NSubstitute;
-using NUnit.Framework;
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using NSubstitute;
+using NUnit.Framework;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX.Test
 {
@@ -64,9 +64,21 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenCallbackIsNull()
+        public void Go_Individual_ShouldThrow_WhenCallbackIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => mSut.Go(null));
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, string>>)null));
+        }
+
+        [Test]
+        public void Go_Tables_ShouldThrow_WhenCallbackIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>>)null));
+        }
+
+        [Test]
+        public void Go_Both_ShouldThrow_WhenCallbackIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => mSut.Go((Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>>)null));
         }
 
         [Test]
