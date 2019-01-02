@@ -147,13 +147,25 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenResultsStartPageUrlIsNull()
+        public void Go_Both_ShouldThrow_WhenResultsStartPageUrlIsNull()
         {
             Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call {nameof(IPaginatingScraper.SetResultsStartPage)}.");
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenIndividualNodeXPathIsNull()
+        public void Go_Individual_ShouldThrow_WhenTargetPageXPathsAreNull()
+        {
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((string link, IDictionary<string, string> dict) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTargetPageXPaths)}.");
+        }
+
+        [Test]
+        public void Go_Tables_ShouldThrow_WhenTableXPathsAreNull()
+        {
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((string link, IDictionary<string, IEnumerable<IEnumerable<string>>> tables) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTableXPaths)}.");
+        }
+
+        [Test]
+        public void Go_Both_ShouldThrow_WhenIndividualNodeXPathIsNull()
         {
             mSut.SetResultsStartPage("/");
 

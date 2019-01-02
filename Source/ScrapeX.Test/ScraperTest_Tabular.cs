@@ -1,13 +1,15 @@
-﻿using HtmlAgilityPack;
-using NSubstitute;
-using NUnit.Framework;
-using ScrapeX.Interfaces;
+﻿// Copyright © 2018 Alex Leendertsen
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Xml.XPath;
+using HtmlAgilityPack;
+using NSubstitute;
+using NUnit.Framework;
+using ScrapeX.Interfaces;
 
 namespace ScrapeX.Test
 {
@@ -45,12 +47,13 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldScrapeSingleTable()
+        public void Go_Both_ShouldReturnEmptyDictionary_WhenIndividualXPathsNotSpecified()
         {
             const string tableKey = "WSU Coaching";
             mSut.SetTableXPaths(new Dictionary<string, IEnumerable<string>>
             {
-                {tableKey, new []
+                {
+                    tableKey, new[]
                     {
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[1]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[2]",
@@ -59,18 +62,45 @@ namespace ScrapeX.Test
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[5]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[6]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[7]",
-                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[8]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[8]"
+                    }
+                }
+            });
+
+            IDictionary<string, string> dictActual = null;
+            mSut.Go((link, dict, tables) => { dictActual = dict; });
+
+            CollectionAssert.IsEmpty(dictActual);
+        }
+
+        [Test]
+        public void Go_ShouldScrapeSingleTable()
+        {
+            const string tableKey = "WSU Coaching";
+            mSut.SetTableXPaths(new Dictionary<string, IEnumerable<string>>
+            {
+                {
+                    tableKey, new[]
+                    {
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[1]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[2]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[3]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[4]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[5]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[6]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[7]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[8]"
                     }
                 }
             });
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.Go((link, dict, tables) =>
-            {
-                resultLink = link;
-                result = tables;
-            });
+            mSut.Go((link, tables) =>
+                {
+                    resultLink = link;
+                    result = tables;
+                });
 
             Assert.AreEqual(BaseUrl, resultLink);
             AssertSingleTable(tableKey, result);
@@ -82,7 +112,8 @@ namespace ScrapeX.Test
             const string tableKey = "Game results";
             mSut.SetTableXPaths(new Dictionary<string, IEnumerable<string>>
             {
-                {tableKey, new []
+                {
+                    tableKey, new[]
                     {
                         "//*[@id=\"mw-content-text\"]/div/table[3]/tbody/tr/td/table/tbody/tr/td[1]",
                         "//*[@id=\"mw-content-text\"]/div/table[3]/tbody/tr/td/table/tbody/tr/td[2]",
@@ -95,11 +126,11 @@ namespace ScrapeX.Test
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.Go((link, dict, tables) =>
-            {
-                resultLink = link;
-                result = tables;
-            });
+            mSut.Go((link, tables) =>
+                {
+                    resultLink = link;
+                    result = tables;
+                });
 
             Assert.AreEqual(BaseUrl, resultLink);
             AssertSplitTable(tableKey, result);
@@ -112,7 +143,8 @@ namespace ScrapeX.Test
             const string tableKey2 = "WSU Coaching";
             mSut.SetTableXPaths(new Dictionary<string, IEnumerable<string>>
             {
-                {tableKey1, new []
+                {
+                    tableKey1, new[]
                     {
                         "//*[@id=\"mw-content-text\"]/div/table[3]/tbody/tr/td/table/tbody/tr/td[1]",
                         "//*[@id=\"mw-content-text\"]/div/table[3]/tbody/tr/td/table/tbody/tr/td[2]",
@@ -121,7 +153,8 @@ namespace ScrapeX.Test
                         "//*[@id=\"mw-content-text\"]/div/table[3]/tbody/tr/td/table/tbody/tr/td[5]"
                     }
                 },
-                {tableKey2, new []
+                {
+                    tableKey2, new[]
                     {
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[1]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[2]",
@@ -130,18 +163,18 @@ namespace ScrapeX.Test
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[5]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[6]",
                         "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[7]",
-                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[8]",
+                        "//*[@id=\"mw-content-text\"]/div/table[5]/tbody/tr/td[8]"
                     }
                 }
             });
 
             string resultLink = null;
             IDictionary<string, IEnumerable<IEnumerable<string>>> result = null;
-            mSut.Go((link, dict, tables) =>
-            {
-                resultLink = link;
-                result = tables;
-            });
+            mSut.Go((link, tables) =>
+                {
+                    resultLink = link;
+                    result = tables;
+                });
 
             Assert.AreEqual(BaseUrl, resultLink);
 

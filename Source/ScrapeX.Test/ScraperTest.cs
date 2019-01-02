@@ -82,7 +82,19 @@ namespace ScrapeX.Test
         }
 
         [Test]
-        public void Go_ShouldThrow_WhenTargetPageXPathsAreNull()
+        public void Go_Individual_ShouldThrow_WhenTargetPageXPathsAreNull()
+        {
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((string link, IDictionary<string, string> dict) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTargetPageXPaths)}.");
+        }
+
+        [Test]
+        public void Go_Tables_ShouldThrow_WhenTableXPathsAreNull()
+        {
+            Assert.Throws<InvalidOperationException>(() => mSut.Go((string link, IDictionary<string, IEnumerable<IEnumerable<string>>> tables) => { })).AndHasMessage($"Must first call {nameof(IScraper.SetTableXPaths)}.");
+        }
+
+        [Test]
+        public void Go_Both_ShouldThrow_WhenTargetPageXPathsAreNull()
         {
             Assert.Throws<InvalidOperationException>(() => mSut.Go((link, dict, tables) => { })).AndHasMessage($"Must first call either {nameof(IScraper.SetTargetPageXPaths)} or {nameof(IScraper.SetTableXPaths)}.");
         }
@@ -94,7 +106,7 @@ namespace ScrapeX.Test
 
             string receivedLink = null;
             IDictionary<string, string> values = null;
-            mSut.Go((link, dict, tables) =>
+            mSut.Go((link, dict) =>
                 {
                     receivedLink = link;
                     values = dict;
@@ -112,7 +124,7 @@ namespace ScrapeX.Test
 
             string receivedLink = null;
             IDictionary<string, string> values = null;
-            mSut.Go((link, dict, tables) =>
+            mSut.Go((link, dict) =>
                 {
                     receivedLink = link;
                     values = dict;
@@ -121,6 +133,17 @@ namespace ScrapeX.Test
             Assert.AreEqual(BaseUrl, receivedLink);
             Assert.AreEqual(1, values.Count);
             Assert.IsNull(values["br"]);
+        }
+
+        [Test]
+        public void Go_Both_ShouldReturnEmptyDictionary_WhenTableXPathsNotSpecified()
+        {
+            mSut.SetTargetPageXPaths(new Dictionary<string, string> { { "br", "/html/body/section/section/section/div[1]/p[1]/span[1]/b[1]" } });
+
+            IDictionary<string, IEnumerable<IEnumerable<string>>> tablesActual = null;
+            mSut.Go((link, dict, tables) => { tablesActual = tables; });
+
+            CollectionAssert.IsEmpty(tablesActual);
         }
     }
 }

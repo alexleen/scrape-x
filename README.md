@@ -11,6 +11,7 @@ Basic features:
 - Pagination
 - Throttling
 - [HttpClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=netframework-4.7.2) injection
+- Table scraping
 ## Wiki
 For how-to's, examples, and documentation, please see [the wiki](https://github.com/alexleen/scrape-x/wiki).
 ## Example Usage

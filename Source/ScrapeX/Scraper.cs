@@ -17,7 +17,7 @@ namespace ScrapeX
 
         private HttpClient mHttpClient;
         private IDictionary<string, string> mXPaths;
-        private IDictionary<string, IEnumerable<string>> mTableCellXPaths;
+        protected IDictionary<string, IEnumerable<string>> TableCellXPaths;
 
         internal Scraper(string baseUrl, INavigatorFactory navigatorFactory)
         {
@@ -65,30 +65,36 @@ namespace ScrapeX
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(tableCellXPaths));
             }
 
-            mTableCellXPaths = tableCellXPaths;
+            TableCellXPaths = tableCellXPaths;
             return this;
         }
 
-        public void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        public virtual void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
             {
                 throw new ArgumentNullException(nameof(onTargetRetrieved));
             }
 
-            ValidateMinimalOptions();
+            if (mXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetTargetPageXPaths)}.");
+            }
 
             ScrapeTarget(BaseUrl, (link, item, table) => onTargetRetrieved(link, item));
         }
 
-        public void Go(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
+        public virtual void Go(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
             {
                 throw new ArgumentNullException(nameof(onTargetRetrieved));
             }
 
-            ValidateMinimalOptions();
+            if (TableCellXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetTableXPaths)}.");
+            }
 
             ScrapeTarget(BaseUrl, (link, item, table) => onTargetRetrieved(link, table));
         }
@@ -100,7 +106,10 @@ namespace ScrapeX
                 throw new ArgumentNullException(nameof(onTargetRetrieved));
             }
 
-            ValidateMinimalOptions();
+            if (mXPaths == null && TableCellXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call either {nameof(SetTargetPageXPaths)} or {nameof(SetTableXPaths)}.");
+            }
 
             ScrapeTarget(BaseUrl, onTargetRetrieved);
         }
@@ -117,7 +126,8 @@ namespace ScrapeX
         }
 
         /// <summary>
-        /// Scrapes the specified <paramref name="navigator"/> using the specified <paramref name="xPaths"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// Scrapes the specified <paramref name="navigator"/> and invokes <paramref name="onTargetRetrieved"/> with the results.
+        /// Scrapes individual XPaths, if configured, along with tables, if configured.
         /// <paramref name="link"/> is only used for callback. <paramref name="link"/> is NOT retrieved.
         /// </summary>
         /// <param name="navigator"></param>
@@ -136,9 +146,9 @@ namespace ScrapeX
                 }
             }
 
-            IDictionary<string, IEnumerable<IEnumerable<string>>> tables = null;
+            IDictionary<string, IEnumerable<IEnumerable<string>>> tables = new Dictionary<string, IEnumerable<IEnumerable<string>>>();
 
-            if (mTableCellXPaths != null)
+            if (TableCellXPaths != null)
             {
                 tables = ScrapeTables();
             }
@@ -152,7 +162,7 @@ namespace ScrapeX
 
             XPathNavigator listing = Get(BaseUrl);
 
-            foreach (KeyValuePair<string, IEnumerable<string>> kvp in mTableCellXPaths)
+            foreach (KeyValuePair<string, IEnumerable<string>> kvp in TableCellXPaths)
             {
                 IList<IList<string>> colValues = new List<IList<string>>();
                 int currCol = 0;
@@ -176,14 +186,6 @@ namespace ScrapeX
             }
 
             return result;
-        }
-
-        protected virtual void ValidateMinimalOptions()
-        {
-            if (mXPaths == null && mTableCellXPaths == null)
-            {
-                throw new InvalidOperationException($"Must first call either {nameof(SetTargetPageXPaths)} or {nameof(SetTableXPaths)}.");
-            }
         }
 
         protected XPathNavigator Get(string url)

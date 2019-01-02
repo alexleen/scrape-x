@@ -1,11 +1,11 @@
-﻿// Copyright © 2018 Alex Leendertsen
+﻿// Copyright © 2019 Alex Leendertsen
 
-using ScrapeX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.XPath;
+using ScrapeX.Interfaces;
 
 [assembly: InternalsVisibleTo("ScrapeX.Test")]
 
@@ -112,6 +112,36 @@ namespace ScrapeX
             return this;
         }
 
+        public override void Go(Action<string, IDictionary<string, string>> onTargetRetrieved)
+        {
+            if (onTargetRetrieved == null)
+            {
+                throw new ArgumentNullException(nameof(onTargetRetrieved));
+            }
+
+            if (mXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetTargetPageXPaths)}.");
+            }
+
+            //TODO
+        }
+
+        public override void Go(Action<string, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
+        {
+            if (onTargetRetrieved == null)
+            {
+                throw new ArgumentNullException(nameof(onTargetRetrieved));
+            }
+
+            if (TableCellXPaths == null)
+            {
+                throw new InvalidOperationException($"Must first call {nameof(SetTableXPaths)}.");
+            }
+
+            //TODO
+        }
+
         public override void Go(Action<string, IDictionary<string, string>, IDictionary<string, IEnumerable<IEnumerable<string>>>> onTargetRetrieved)
         {
             if (onTargetRetrieved == null)
@@ -152,7 +182,7 @@ namespace ScrapeX
             while (!string.IsNullOrEmpty(currentResultsPageUrl));
         }
 
-        protected override void ValidateMinimalOptions()
+        private void ValidateMinimalOptions()
         {
             if (mResultsStartPageUrl == null)
             {
@@ -175,8 +205,6 @@ namespace ScrapeX
                 {
                     throw new InvalidOperationException($"Must first call {nameof(SetIndividualResultLinkXPath)}.");
                 }
-
-                base.ValidateMinimalOptions();
             }
             else
             {
